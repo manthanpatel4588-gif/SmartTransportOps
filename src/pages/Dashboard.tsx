@@ -122,18 +122,21 @@ export default function Dashboard() {
       
       {/* Soft blurred logistics background representation */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.05] filter blur-[6px] pointer-events-none"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[8px] pointer-events-none"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
       ></div>
 
       {/* Decorative colored glow blobs for glassmorphism highlights */}
-      <div className="absolute top-[10%] left-[20%] w-[350px] h-[350px] bg-blue-400/10 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-indigo-400/8 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-[10%] left-[20%] w-[350px] h-[350px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '6000ms' }}></div>
+      <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-indigo-500/8 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '8000ms' }}></div>
 
-      {/* 1. Left Sidebar - Fixed & Professional Navy Theme */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-[#E5E7EB] bg-[#0F172A] p-6 justify-between flex-shrink-0 z-20">
+      {/* 1. Left Sidebar - Fixed & Premium Light Glass Theme */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/85 bg-white/70 backdrop-blur-md p-6 justify-between flex-shrink-0 z-20">
         <div className="space-y-8">
-          <Logo iconSize={26} textSize="text-lg" />
+          {/* Logo wrapped in dark capsule to protect from-white text */}
+          <div className="bg-slate-900 px-4 py-3 rounded-xl border border-slate-800 shadow-md">
+            <Logo iconSize={22} textSize="text-base" />
+          </div>
 
           {/* Nav links */}
           <nav className="space-y-1.5">
@@ -153,8 +156,8 @@ export default function Dashboard() {
                 onClick={() => setActiveTab(item.name)}
                 className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.98] ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.2)]'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -163,7 +166,7 @@ export default function Dashboard() {
                 </div>
                 {item.badge && (
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
                   }`}>
                     {item.badge}
                   </span>
@@ -174,19 +177,19 @@ export default function Dashboard() {
         </div>
 
         {/* User Card & Logout */}
-        <div className="border-t border-slate-800 pt-6 space-y-4">
+        <div className="border-t border-slate-200/80 pt-6 space-y-4">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2563EB] to-blue-500 flex items-center justify-center font-display font-bold text-white shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2563EB] to-blue-500 flex items-center justify-center font-display font-bold text-white shadow-md shadow-blue-500/10">
               OP
             </div>
             <div>
-              <p className="text-sm font-bold text-white">Operator #402</p>
-              <p className="text-xs text-slate-400">Control Center 2</p>
+              <p className="text-sm font-bold text-slate-800">Operator #402</p>
+              <p className="text-xs text-slate-500">Control Center 2</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-150"
           >
             <LogOut className="w-4 h-4" />
             <span>Operator Sign Out</span>
@@ -198,7 +201,7 @@ export default function Dashboard() {
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-transparent z-10">
         
         {/* Minimal Navbar */}
-        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#E5E7EB] bg-white/80 backdrop-blur-md sticky top-0 z-20 shadow-xs">
+        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-slate-200/60 bg-white/80 backdrop-blur-md sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-4">
             {/* Mobile Menu Trigger */}
             <button
@@ -283,7 +286,7 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Hero Banner Section with subtle blurred background truck image */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md p-6 md:p-8 shadow-xs animate-slide-up-fade [animation-delay:0ms]">
+              <div className="relative overflow-hidden rounded-[24px] border border-white/60 bg-white/80 backdrop-blur-lg p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
                 {/* Truck background with 6% opacity & blur */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[1px]"
@@ -302,7 +305,7 @@ export default function Dashboard() {
               </div>
 
               {/* Weather Alert banner - separated appropriately */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-amber-50/80 backdrop-blur-md border border-amber-200 text-amber-700 shadow-xs animate-slide-up-fade [animation-delay:50ms]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-[20px] bg-amber-50/60 backdrop-blur-md border border-amber-200/50 text-amber-800 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '50ms' }}>
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
                   <div>
@@ -310,60 +313,65 @@ export default function Dashboard() {
                     <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
-                <button className="px-4 py-2 rounded-xl bg-amber-650 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-xs">
+                <button className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-xs">
                   Manage Re-Routing
                 </button>
               </div>
 
               {/* Summary Metric Cards - Equal height (items-stretch) & Staggered slide entrance */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-stretch">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-stretch w-full">
                 {[
-                  { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true },
-                  { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true },
-                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At garage facility', icon: Wrench, trend: '-0.5%', up: false },
-                  { title: 'Active Trips', value: kpis.activeTrips.toLocaleString(), desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true },
-                  { title: 'Drivers On Duty', value: kpis.driversOnDuty.toLocaleString(), desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true },
-                  { title: 'Fleet Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true }
+                  { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, color: 'text-blue-600 bg-blue-50/60 border-blue-100/50' },
+                  { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true, color: 'text-emerald-600 bg-emerald-50/60 border-emerald-100/50' },
+                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At garage facility', icon: Wrench, trend: '-0.5%', up: false, color: 'text-amber-600 bg-amber-50/60 border-amber-100/50' },
+                  { title: 'Active Trips', value: kpis.activeTrips.toLocaleString(), desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true, color: 'text-indigo-600 bg-indigo-50/60 border-indigo-100/50' },
+                  { title: 'Drivers On Duty', value: kpis.driversOnDuty.toLocaleString(), desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true, color: 'text-purple-600 bg-purple-50/60 border-purple-100/50' },
+                  { title: 'Fleet Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true, color: 'text-cyan-600 bg-cyan-50/60 border-cyan-100/50' }
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 relative overflow-hidden group hover:scale-[1.02] hover:shadow-md hover:border-[#2563EB] transition-all duration-300 shadow-xs flex flex-col justify-between items-stretch animate-slide-up-fade"
+                    className="p-6 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-blue-500/25 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between items-stretch animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
-                    <div>
+                    <div className="absolute -inset-px bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[20px] pointer-events-none" />
+                    <div className="relative z-10 flex flex-col justify-between h-full">
                       <div className="flex justify-between items-start mb-4">
-                        <div className="p-2 rounded-xl bg-slate-50 text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-200">
+                        <div className={`p-2.5 rounded-xl border ${stat.color} transition-all duration-300 group-hover:scale-105 shadow-xs`}>
                           <stat.icon className="w-5 h-5" />
                         </div>
-                        <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                          stat.up ? 'bg-emerald-50 text-[#22C55E]' : 'bg-red-50 text-[#EF4444]'
+                        <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          stat.up 
+                            ? 'bg-emerald-50/80 text-emerald-600 border-emerald-200/50' 
+                            : 'bg-rose-50/80 text-rose-600 border-rose-200/50'
                         }`}>
-                          {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
+                          {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                           {stat.trend}
                         </span>
                       </div>
-                      <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 leading-tight truncate">{stat.title}</h3>
-                      <p className="text-2xl font-display font-extrabold text-slate-900 mb-1">{stat.value}</p>
+                      <div>
+                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 leading-tight truncate">{stat.title}</h3>
+                        <p className="text-2xl font-display font-extrabold text-slate-900 mb-1 tracking-tight">{stat.value}</p>
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-2 truncate leading-none">{stat.desc}</p>
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-2 truncate leading-none">{stat.desc}</p>
                   </div>
                 ))}
               </div>
 
               {/* Large Analytics Visualization & Recent Dispatches Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start w-full">
                 
                 {/* Left Column (Feeds + Quick Actions + Analytics charts) */}
                 <div className="lg:col-span-2 space-y-8">
                   {/* Real-Time Dispatch Feeds */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:400ms]">
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '400ms' }}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <h2 className="font-display text-lg font-bold text-slate-900">Real-Time Dispatch Feeds</h2>
+                        <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Real-Time Dispatch Feeds</h2>
                         <p className="text-xs text-slate-400">Current tracking list for dispatch terminals</p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all duration-200 active:scale-[0.98]">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all duration-200 active:scale-[0.98] shadow-xs">
                           <Filter className="w-3.5 h-3.5" />
                           <span>Filter</span>
                         </button>
@@ -373,41 +381,42 @@ export default function Dashboard() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
-                            <th className="pb-3 pr-4 pt-2 pl-4">Truck ID</th>
-                            <th className="pb-3 pr-4 pt-2">Driver</th>
-                            <th className="pb-3 pr-4 pt-2">Destination</th>
-                            <th className="pb-3 pr-4 pt-2">Route Status</th>
-                            <th className="pb-3 pr-4 pt-2">ETA</th>
+                          <tr className="border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-400">
+                            <th className="pb-4 pr-4 pt-2 pl-4">Truck ID</th>
+                            <th className="pb-4 pr-4 pt-2">Driver</th>
+                            <th className="pb-4 pr-4 pt-2">Destination</th>
+                            <th className="pb-4 pr-4 pt-2">Route Status</th>
+                            <th className="pb-4 pr-4 pt-2">ETA</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 text-sm">
+                        <tbody className="divide-y divide-slate-50 text-sm">
                           {dispatches.map((dispatch) => (
-                            <tr key={dispatch.id} className="group hover:bg-slate-50/50 transition-colors">
-                              <td className="py-3.5 font-mono font-bold text-[#2563EB] hover:underline cursor-pointer pr-4 pl-4">{dispatch.id}</td>
-                              <td className="py-3.5 text-slate-800 font-semibold pr-4">
+                            <tr key={dispatch.id} className="group hover:bg-slate-50/40 transition-colors">
+                              <td className="py-4.5 font-mono font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pr-4 pl-4">{dispatch.id}</td>
+                              <td className="py-4.5 text-slate-800 font-semibold pr-4">
                                 <div className="flex items-center gap-2.5">
                                   <img
                                     src={`https://ui-avatars.com/api/?name=${encodeURIComponent(dispatch.driver)}&background=f0f7ff&color=0284c7&bold=true&rounded=true&size=32`}
                                     alt={dispatch.driver}
-                                    className="w-7 h-7 rounded-full object-cover"
+                                    className="w-7 h-7 rounded-full object-cover shadow-xs border border-slate-100"
                                   />
                                   <span>{dispatch.driver}</span>
                                 </div>
                               </td>
-                              <td className="py-3.5 text-slate-500 pr-4">{dispatch.destination}</td>
-                              <td className="py-3.5 pr-4">
+                              <td className="py-4.5 text-slate-500 pr-4">{dispatch.destination}</td>
+                              <td className="py-4.5 pr-4">
                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                                  dispatch.status === 'Completed' ? 'bg-emerald-50 text-[#22C55E] border border-emerald-100' :
-                                  'bg-blue-50 text-[#2563EB] border border-blue-100'
+                                  dispatch.status === 'Completed' 
+                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/40' 
+                                    : 'bg-blue-50 text-blue-600 border border-blue-200/40'
                                 }`}>
                                   <span className={`w-1.5 h-1.5 rounded-full ${
-                                    dispatch.status === 'Completed' ? 'bg-[#22C55E]' : 'bg-[#2563EB]'
+                                    dispatch.status === 'Completed' ? 'bg-emerald-500' : 'bg-blue-500'
                                   }`}></span>
                                   {dispatch.status}
                                 </span>
                               </td>
-                              <td className="py-3.5 text-slate-400 font-medium pr-4">{dispatch.ETA}</td>
+                              <td className="py-4.5 text-slate-400 font-medium pr-4">{dispatch.ETA}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -416,9 +425,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Recharts Analytics Section: Utilization Area Chart - Glass Card */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:450ms]">
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '450ms' }}>
                     <div>
-                      <h2 className="font-display text-lg font-bold text-slate-900">Fleet Utilization Trend</h2>
+                      <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Fleet Utilization Trend</h2>
                       <p className="text-xs text-slate-400">Active utilization percentage levels tracked weekly</p>
                     </div>
 
@@ -438,7 +447,7 @@ export default function Dashboard() {
                           <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
                           <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
+                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)' }}
                           />
                           <Area type="monotone" dataKey="Utilization" name="Utilization Rate (%)" stroke="#2563EB" strokeWidth={2.5} fillOpacity={1} fill="url(#utilGrad)" isAnimationActive={true} animationDuration={1000} />
                         </AreaChart>
@@ -447,9 +456,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Recharts Analytics Section: Cost Bar Chart - Glass Card */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:500ms]">
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '500ms' }}>
                     <div>
-                      <h2 className="font-display text-lg font-bold text-slate-900">Fleet Cost Breakdown</h2>
+                      <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Fleet Cost Breakdown</h2>
                       <p className="text-xs text-slate-400">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
                     </div>
 
@@ -463,7 +472,7 @@ export default function Dashboard() {
                           <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
                           <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
                           <Tooltip
-                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
+                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)' }}
                           />
                           <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '10px', color: '#64748B' }} />
                           <Bar dataKey="Fuel" name="Fuel Expenses ($)" fill="#2563EB" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1200} />
@@ -474,26 +483,30 @@ export default function Dashboard() {
                   </div>
 
                   {/* Quick Actions Panel - Glass Card */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-4 shadow-xs animate-slide-up-fade [animation-delay:550ms]">
-                    <h3 className="font-display text-sm font-bold text-slate-800">Quick Actions</h3>
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '550ms' }}>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-slate-900 tracking-tight">Quick Actions</h3>
+                      <p className="text-xs text-slate-400">Trigger active workflows directly from Overview console</p>
+                    </div>
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                       {[
-                        { name: 'New Trip', desc: 'Create a new trip', icon: Compass, tab: 'Trip Management', color: 'text-brand-blue-500 bg-brand-blue-50' },
-                        { name: 'Schedule Maintenance', desc: 'Add maintenance task', icon: Wrench, tab: 'Maintenance', color: 'text-purple-500 bg-purple-50' },
-                        { name: 'Add Fuel Log', desc: 'Record fuel entry', icon: Droplet, tab: 'Fuel Management', color: 'text-cyan-500 bg-cyan-50' },
-                        { name: 'Add Expense', desc: 'Record other expense', icon: DollarSign, tab: 'System Settings', color: 'text-amber-500 bg-amber-50' },
-                        { name: 'View Reports', desc: 'Analytics & insights', icon: TrendingUp, tab: 'Overview', color: 'text-indigo-500 bg-indigo-50' }
+                        { name: 'New Trip', desc: 'Create a new trip', icon: Compass, tab: 'Trip Management', color: 'text-blue-600 bg-blue-50/60 border-blue-100/50' },
+                        { name: 'Schedule Maintenance', desc: 'Add maintenance task', icon: Wrench, tab: 'Maintenance', color: 'text-purple-600 bg-purple-50/60 border-purple-100/50' },
+                        { name: 'Add Fuel Log', desc: 'Record fuel entry', icon: Droplet, tab: 'Fuel Management', color: 'text-cyan-600 bg-cyan-50/60 border-cyan-100/50' },
+                        { name: 'Add Expense', desc: 'Record other expense', icon: DollarSign, tab: 'System Settings', color: 'text-amber-600 bg-amber-50/60 border-amber-100/50' },
+                        { name: 'View Reports', desc: 'Analytics & insights', icon: TrendingUp, tab: 'Overview', color: 'text-indigo-600 bg-indigo-50/60 border-indigo-100/50' }
                       ].map((action, idx) => (
                         <button
                           key={idx}
                           onClick={() => setActiveTab(action.tab)}
-                          className="flex flex-col items-start p-4 rounded-xl border border-slate-200 bg-white/60 hover:bg-slate-50 hover:border-slate-350 hover:scale-[1.05] hover:shadow-xs text-left transition-all duration-300 group"
+                          className="flex flex-col items-start p-5 rounded-[18px] border border-white/60 bg-white/80 hover:bg-white hover:border-blue-500/20 hover:scale-[1.03] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.04)] text-left transition-all duration-300 group relative overflow-hidden"
                         >
-                          <div className={`p-2 rounded-lg ${action.color} mb-3 group-hover:scale-105 transition-transform duration-300`}>
-                            <action.icon className="w-4 h-4" />
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-blue-50/5 to-blue-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                          <div className={`p-3 rounded-xl border ${action.color} mb-4 group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
+                            <action.icon className="w-5 h-5" />
                           </div>
-                          <p className="text-xs font-bold text-slate-800 leading-tight">{action.name}</p>
-                          <p className="text-[10px] text-slate-400 mt-1 leading-none">{action.desc}</p>
+                          <p className="text-xs font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors duration-200">{action.name}</p>
+                          <p className="text-[10px] text-slate-400 mt-1 leading-normal">{action.desc}</p>
                         </button>
                       ))}
                     </div>
@@ -504,13 +517,13 @@ export default function Dashboard() {
                 <div className="space-y-8">
                   
                   {/* Network Routing Map Card - Glass Card */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 flex flex-col h-[340px] shadow-xs animate-slide-up-fade [animation-delay:600ms]">
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 flex flex-col h-[380px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
                     <div>
-                      <h2 className="font-display text-base font-bold text-slate-900">Network Routing Map</h2>
+                      <h2 className="font-display text-base font-bold text-slate-900 tracking-tight">Network Routing Map</h2>
                       <p className="text-xs text-slate-400">Live visual feed of logistics grid</p>
                     </div>
 
-                    <div className="relative flex-1 my-4 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden flex items-center justify-center">
+                    <div className="relative flex-1 my-4 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden flex items-center justify-center shadow-inner">
                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] opacity-20"></div>
                       
                       <svg className="w-full h-full absolute inset-0 opacity-40">
@@ -519,21 +532,21 @@ export default function Dashboard() {
                       </svg>
 
                       {/* Marker Pulse Animations */}
-                      <span className="absolute left-[50px] top-[80px] flex h-3.5 w-3.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-sm border border-white"></span>
+                      <span className="absolute left-[50px] top-[80px] flex h-4.5 w-4.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-60"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-md border-2 border-white"></span>
                       </span>
-                      <span className="absolute left-[220px] top-[70px] flex h-3.5 w-3.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-sm border border-white"></span>
+                      <span className="absolute left-[220px] top-[70px] flex h-4.5 w-4.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-60"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-md border-2 border-white"></span>
                       </span>
-                      <span className="absolute left-[300px] top-[120px] flex h-3.5 w-3.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 shadow-sm border border-white"></span>
+                      <span className="absolute left-[300px] top-[120px] flex h-4.5 w-4.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 shadow-md border-2 border-white"></span>
                       </span>
 
-                      <div className="absolute bottom-3 left-3 right-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800 backdrop-blur-md flex items-center justify-between text-[10px]">
-                        <span className="font-semibold text-slate-300">Interactive Feed Active</span>
+                      <div className="absolute bottom-3 left-3 right-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800/80 backdrop-blur-md flex items-center justify-between text-[10px]">
+                        <span className="font-semibold text-slate-350">Interactive Feed Active</span>
                         <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                           ONLINE
@@ -543,15 +556,15 @@ export default function Dashboard() {
 
                     <div className="flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100 pt-3">
                       <span>Refreshed: Just Now</span>
-                      <span className="text-brand-blue-600 cursor-pointer hover:underline">Re-center Map</span>
+                      <span className="text-blue-600 cursor-pointer hover:underline">Re-center Map</span>
                     </div>
                   </div>
 
                   {/* GPS Feed Logs (Terminal signal logs) - Glass Card */}
-                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 shadow-xs flex flex-col justify-between animate-slide-up-fade [animation-delay:650ms]">
+                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] transition-all duration-300 flex flex-col justify-between animate-slide-up-fade" style={{ animationDelay: '650ms' }}>
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-display text-base font-bold text-slate-900">GPS Terminal Feed</h3>
+                        <h3 className="font-display text-base font-bold text-slate-900 tracking-tight">GPS Terminal Feed</h3>
                         <List className="w-4 h-4 text-slate-400" />
                       </div>
                       <p className="text-xs text-slate-400">Live signal lock messages from operator network</p>
@@ -565,7 +578,7 @@ export default function Dashboard() {
                         { time: '12:02:50', vehicle: 'TRK-5524', action: 'Route deviation warning triggered near Houston Beltway.', status: 'warn' },
                         { time: '12:02:10', vehicle: 'TRK-8843', action: 'Stopped at logistics base terminal Dallas North.', status: 'info' }
                       ].map((log, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl bg-white/50 border border-slate-200/80 space-y-1.5 hover:scale-[1.01] transition-transform">
+                        <div key={idx} className="p-4 rounded-xl bg-white/60 border border-slate-100/80 hover:border-blue-500/25 hover:bg-white/95 hover:shadow-xs transition-all duration-200 space-y-2">
                           <div className="flex justify-between items-center text-[10px]">
                             <span className="font-mono font-bold text-[#2563EB] flex items-center gap-1">
                               <MapPin className="w-3 h-3" />
@@ -573,11 +586,11 @@ export default function Dashboard() {
                             </span>
                             <span className="text-slate-400 font-semibold">{log.time}</span>
                           </div>
-                          <p className="text-xs text-slate-600 leading-relaxed">{log.action}</p>
+                          <p className="text-xs text-slate-600 leading-relaxed font-medium">{log.action}</p>
                           <div className="flex items-center gap-1.5">
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               log.status === 'success' ? 'bg-emerald-500' :
-                              log.status === 'warn' ? 'bg-amber-500' : 'bg-brand-blue-500'
+                              log.status === 'warn' ? 'bg-amber-500' : 'bg-blue-500'
                             }`}></span>
                             <span className="text-[9px] uppercase font-bold text-slate-400">{log.status}</span>
                           </div>
@@ -600,12 +613,14 @@ export default function Dashboard() {
 
       {/* Mobile Drawer Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#0F172A]/95 z-40 flex flex-col p-6 md:hidden animate-fadeIn">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-5 mb-6">
-            <Logo iconSize={26} textSize="text-lg" />
+        <div className="fixed inset-0 bg-white/95 backdrop-blur-lg z-40 flex flex-col p-6 md:hidden animate-fadeIn">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-5 mb-6">
+            <div className="bg-slate-900 px-4 py-3 rounded-xl border border-slate-800 shadow-sm">
+              <Logo iconSize={22} textSize="text-base" />
+            </div>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 hover:text-white"
+              className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-slate-800"
             >
               <X className="w-5 h-5" />
             </button>
@@ -631,8 +646,8 @@ export default function Dashboard() {
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all active:scale-[0.98] ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.2)]'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -641,7 +656,7 @@ export default function Dashboard() {
                 </div>
                 {item.badge && (
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'
                   }`}>
                     {item.badge}
                   </span>
@@ -650,10 +665,10 @@ export default function Dashboard() {
             ))}
           </nav>
 
-          <div className="border-t border-slate-800 pt-6">
+          <div className="border-t border-slate-200 pt-6">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-all"
             >
               <LogOut className="w-5 h-5" />
               <span>Operator Sign Out</span>
