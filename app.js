@@ -135,20 +135,34 @@ function saveToLocalStorage() {
 function switchTab(tab) {
     const sectionDrivers = document.getElementById("section-drivers");
     const sectionVehicles = document.getElementById("section-vehicles");
+    const sectionExpenses = document.getElementById("section-expenses");
     const navDrivers = document.getElementById("nav-drivers");
     const navVehicles = document.getElementById("nav-vehicles");
+    const navExpenses = document.getElementById("nav-expenses");
 
     if (tab === 'drivers') {
         navDrivers.classList.add('active');
         navVehicles.classList.remove('active');
+        if (navExpenses) navExpenses.classList.remove('active');
         sectionDrivers.style.display = 'block';
         sectionVehicles.style.display = 'none';
+        sectionExpenses.style.display = 'none';
         renderApp();
     } else if (tab === 'vehicles') {
         navDrivers.classList.remove('active');
         navVehicles.classList.add('active');
+        if (navExpenses) navExpenses.classList.remove('active');
         sectionDrivers.style.display = 'none';
         sectionVehicles.style.display = 'block';
+        sectionExpenses.style.display = 'none';
+        // Rendering handled automatically by React!
+    } else if (tab === 'expenses') {
+        navDrivers.classList.remove('active');
+        navVehicles.classList.remove('active');
+        if (navExpenses) navExpenses.classList.add('active');
+        sectionDrivers.style.display = 'none';
+        sectionVehicles.style.display = 'none';
+        sectionExpenses.style.display = 'block';
         // Rendering handled automatically by React!
     }
 }
@@ -157,6 +171,7 @@ function switchTab(tab) {
 function bindEvents() {
     const navDrivers = document.getElementById("nav-drivers");
     const navVehicles = document.getElementById("nav-vehicles");
+    const navExpenses = document.getElementById("nav-expenses");
 
     // Tab switching triggers
     navDrivers.addEventListener("click", (e) => {
@@ -167,6 +182,12 @@ function bindEvents() {
         e.preventDefault();
         switchTab('vehicles');
     });
+    if (navExpenses) {
+        navExpenses.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchTab('expenses');
+        });
+    }
 
     // Drivers Search & Filter change triggers
     searchInput.addEventListener("input", handleSearchInput);
