@@ -166,15 +166,28 @@ export default function ActiveFleets() {
         ].map((card, idx) => (
           <div 
             key={idx} 
-            className="p-6 rounded-[20px] bg-white border border-[#E5E7EB] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-slate-350 transition-all duration-300 flex items-center justify-between"
+            className="p-6 rounded-[20px] bg-white border border-[#E5E7EB] shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05)] hover:shadow-md hover:border-slate-350 transition-all duration-300 relative min-h-[140px] flex flex-col justify-between overflow-hidden"
           >
-            <div className="space-y-1">
+            {/* Top row: Label */}
+            <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">{card.label}</span>
-              <p className="text-3xl font-display font-black text-[#111827]">{card.value}</p>
-              <span className="text-xs font-semibold text-[#6B7280] block">{card.sub}</span>
             </div>
-            <div className={`w-11 h-11 rounded-full ${card.color} flex items-center justify-center shadow-md`}>
-              <card.icon className="w-5.5 h-5.5" />
+
+            {/* Bottom row: Value on left, Icon & Subtitle on right */}
+            <div className="flex items-end justify-between mt-1">
+              <div>
+                <p className="text-3xl font-display font-black text-[#111827] leading-none">{card.value}</p>
+              </div>
+
+              <div className="flex flex-col items-end gap-1 z-10">
+                {/* Subtitle moved to the right and up a little */}
+                <span className="text-xs font-semibold text-[#6B7280] text-right leading-none mb-1">{card.sub}</span>
+                
+                {/* Icon moved a little right and down */}
+                <div className={`w-11 h-11 rounded-full ${card.color} flex items-center justify-center shadow-md translate-x-1.5 translate-y-1.5`}>
+                  <card.icon className="w-5.5 h-5.5" />
+                </div>
+              </div>
             </div>
           </div>
         ))}
