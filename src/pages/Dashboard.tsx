@@ -132,14 +132,14 @@ export default function Dashboard() {
 
       {/* 1. Left Sidebar - Fixed & Premium Light Glass Theme */}
       <aside className="hidden md:flex flex-col w-64 border-r border-slate-200/85 bg-white/70 backdrop-blur-md p-6 justify-between flex-shrink-0 z-20">
-        <div className="space-y-8">
+        <div className="flex flex-col gap-8">
           {/* Logo wrapped in dark capsule to protect from-white text */}
           <div className="bg-slate-900 px-4 py-3 rounded-xl border border-slate-800 shadow-md">
             <Logo iconSize={22} textSize="text-base" />
           </div>
 
           {/* Nav links */}
-          <nav className="space-y-1.5">
+          <nav className="flex flex-col gap-2">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -243,8 +243,8 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Dashboard Grid Content - 24px-32px margins and spacing */}
-        <div className="flex-1 p-6 md:p-8 space-y-8 animate-fadeIn">
+        {/* Dashboard Grid Content - 24px-32px margins and spacing - flex flex-col gap-8 solves overlaps! */}
+        <div className="p-6 md:p-8 flex flex-col gap-8 w-full min-h-screen animate-fadeIn">
           
           {activeTab === 'Trip Management' ? (
             <TripManagement />
@@ -259,19 +259,19 @@ export default function Dashboard() {
           ) : activeTab === 'Drivers' ? (
             <DriverManagement />
           ) : activeTab === 'Notifications' ? (
-            <div className="p-8 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-sm animate-slide-up-fade">
+            <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 space-y-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] animate-slide-up-fade">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <h3 className="font-display font-bold text-lg text-slate-800">Control Center Inbox</h3>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">12 Unread Alerts</span>
               </div>
-              <div className="space-y-4">
+              <div className="flex flex-col gap-4">
                 {[
                   { text: 'Urgent Weather Warning: Heavy rainfall in Midwest Region (ORD1). Redirection active.', type: 'warning' },
                   { text: 'Operator Elena Rostova license warning: Expiry date 2027-05-20.', type: 'info' },
                   { text: 'Vehicle TRK-9801 has completed dispatch leg: Chicago Hub.', type: 'success' },
                   { text: 'Maintenance Schedule Request: Volvo FH16 requires service interval.', type: 'info' }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-white/50 border border-slate-200 text-xs font-medium text-slate-700 hover:scale-[1.01] transition-transform duration-200">
+                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-white/55 border border-slate-200 text-xs font-medium text-slate-700 hover:scale-[1.01] transition-transform duration-200 shadow-sm">
                     <span className={`w-2 h-2 rounded-full mt-1 ${
                       item.type === 'warning' ? 'bg-[#F59E0B]' :
                       item.type === 'success' ? 'bg-[#22C55E]' : 'bg-[#2563EB]'
@@ -286,15 +286,15 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Hero Banner Section with subtle blurred background truck image */}
-              <div className="relative overflow-hidden rounded-[24px] border border-white/60 bg-white/80 backdrop-blur-lg p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
+              <div className="relative overflow-hidden rounded-[24px] border border-slate-200/65 bg-white/90 backdrop-blur-lg p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
                 {/* Truck background with 6% opacity & blur */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[1px]"
                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
                 ></div>
                 
-                <div className="relative z-10 space-y-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+                <div className="relative z-10 flex flex-col gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100 self-start">
                     System Telemetry Online
                   </span>
                   <h2 className="font-display text-2xl font-extrabold text-[#0F172A]">Enterprise Logistics Console</h2>
@@ -305,15 +305,15 @@ export default function Dashboard() {
               </div>
 
               {/* Weather Alert banner - separated appropriately */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-[20px] bg-amber-50/60 backdrop-blur-md border border-amber-200/50 text-amber-800 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '50ms' }}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-[20px] bg-amber-50/70 backdrop-blur-md border border-amber-200/50 text-amber-800 shadow-[0_8px_30px_rgba(15,23,42,0.03)] animate-slide-up-fade" style={{ animationDelay: '50ms' }}>
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
+                  <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600 animate-bounce" style={{ animationDuration: '3s' }} />
                   <div>
                     <p className="text-sm font-bold text-slate-900">Weather Alert: Midwest Region (ORD1)</p>
                     <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
-                <button className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-xs">
+                <button className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-md shadow-amber-600/10">
                   Manage Re-Routing
                 </button>
               </div>
@@ -330,7 +330,7 @@ export default function Dashboard() {
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-6 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-blue-500/25 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex flex-col justify-between items-stretch animate-slide-up-fade"
+                    className="p-6 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(15,23,42,0.06)] hover:border-blue-500/25 transition-all duration-300 shadow-[0_8px_30px_rgba(15,23,42,0.04)] flex flex-col justify-between items-stretch animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
                     <div className="absolute -inset-px bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[20px] pointer-events-none" />
@@ -361,17 +361,17 @@ export default function Dashboard() {
               {/* Large Analytics Visualization & Recent Dispatches Section */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start w-full">
                 
-                {/* Left Column (Feeds + Quick Actions + Analytics charts) */}
-                <div className="lg:col-span-2 space-y-8">
+                {/* Left Column (Feeds + Quick Actions + Analytics charts) - flex gap-8 prevents vertical overlaps! */}
+                <div className="lg:col-span-2 flex flex-col gap-8">
                   {/* Real-Time Dispatch Feeds */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '400ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 flex flex-col gap-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] animate-slide-up-fade" style={{ animationDelay: '400ms' }}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Real-Time Dispatch Feeds</h2>
                         <p className="text-xs text-slate-400">Current tracking list for dispatch terminals</p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all duration-200 active:scale-[0.98] shadow-xs">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all duration-200 active:scale-[0.98] shadow-xs">
                           <Filter className="w-3.5 h-3.5" />
                           <span>Filter</span>
                         </button>
@@ -389,7 +389,7 @@ export default function Dashboard() {
                             <th className="pb-4 pr-4 pt-2">ETA</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 text-sm">
+                        <tbody className="divide-y divide-slate-100 text-sm">
                           {dispatches.map((dispatch) => (
                             <tr key={dispatch.id} className="group hover:bg-slate-50/40 transition-colors">
                               <td className="py-4.5 font-mono font-bold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer pr-4 pl-4">{dispatch.id}</td>
@@ -425,7 +425,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Recharts Analytics Section: Utilization Area Chart - Glass Card */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '450ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 flex flex-col gap-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '450ms' }}>
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Fleet Utilization Trend</h2>
                       <p className="text-xs text-slate-400">Active utilization percentage levels tracked weekly</p>
@@ -456,7 +456,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Recharts Analytics Section: Cost Bar Chart - Glass Card */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '500ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 flex flex-col gap-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:scale-[1.01] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] hover:border-blue-500/20 transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '500ms' }}>
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900 tracking-tight">Fleet Cost Breakdown</h2>
                       <p className="text-xs text-slate-400">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
@@ -483,7 +483,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Quick Actions Panel - Glass Card */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 space-y-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-slide-up-fade" style={{ animationDelay: '550ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 flex flex-col gap-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] animate-slide-up-fade" style={{ animationDelay: '550ms' }}>
                     <div>
                       <h3 className="font-display text-base font-bold text-slate-900 tracking-tight">Quick Actions</h3>
                       <p className="text-xs text-slate-400">Trigger active workflows directly from Overview console</p>
@@ -499,7 +499,7 @@ export default function Dashboard() {
                         <button
                           key={idx}
                           onClick={() => setActiveTab(action.tab)}
-                          className="flex flex-col items-start p-5 rounded-[18px] border border-white/60 bg-white/80 hover:bg-white hover:border-blue-500/20 hover:scale-[1.03] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(0,0,0,0.04)] text-left transition-all duration-300 group relative overflow-hidden"
+                          className="flex flex-col items-start p-5 rounded-[18px] border border-white/60 bg-white/80 hover:bg-white hover:border-blue-500/20 hover:scale-[1.03] hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(15,23,42,0.06)] text-left transition-all duration-300 group relative overflow-hidden"
                         >
                           <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 via-blue-50/5 to-blue-50/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           <div className={`p-3 rounded-xl border ${action.color} mb-4 group-hover:scale-105 transition-transform duration-300 shadow-sm`}>
@@ -513,11 +513,11 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Right Column (Map + GPS Telemetry Logs) - Separated with gap-8 */}
-                <div className="space-y-8">
+                {/* Right Column (Map + GPS Telemetry Logs) - flex gap-8 prevents vertical overlaps! */}
+                <div className="flex flex-col gap-8">
                   
                   {/* Network Routing Map Card - Glass Card */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 flex flex-col h-[380px] shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 flex flex-col h-[380px] shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
                     <div>
                       <h2 className="font-display text-base font-bold text-slate-900 tracking-tight">Network Routing Map</h2>
                       <p className="text-xs text-slate-400">Live visual feed of logistics grid</p>
@@ -561,7 +561,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* GPS Feed Logs (Terminal signal logs) - Glass Card */}
-                  <div className="p-8 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] transition-all duration-300 flex flex-col justify-between animate-slide-up-fade" style={{ animationDelay: '650ms' }}>
+                  <div className="p-8 rounded-[20px] bg-white/90 backdrop-blur-md border border-slate-200/60 shadow-[0_8px_30px_rgba(15,23,42,0.04)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(15,23,42,0.08)] transition-all duration-300 flex flex-col justify-between animate-slide-up-fade" style={{ animationDelay: '650ms' }}>
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-display text-base font-bold text-slate-900 tracking-tight">GPS Terminal Feed</h3>
@@ -626,7 +626,7 @@ export default function Dashboard() {
             </button>
           </div>
           
-          <nav className="flex-1 space-y-1.5 overflow-y-auto">
+          <nav className="flex flex-col gap-2 overflow-y-auto">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
