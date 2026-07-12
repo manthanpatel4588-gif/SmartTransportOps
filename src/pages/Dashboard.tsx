@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LogOut,
@@ -51,6 +51,42 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Animated KPI Counters State
+  const [kpis, setKpis] = useState({
+    activeVehicles: 0,
+    availableVehicles: 0,
+    inMaintenance: 0,
+    activeTrips: 0,
+    driversOnDuty: 0,
+    utilization: 0
+  });
+
+  useEffect(() => {
+    // Staggered KPI Count-up animation on mount
+    const duration = 800;
+    const steps = 30;
+    const stepTime = duration / steps;
+    let step = 0;
+
+    const timer = setInterval(() => {
+      step++;
+      setKpis({
+        activeVehicles: Math.min(Math.round((1248 / steps) * step), 1248),
+        availableVehicles: Math.min(Math.round((482 / steps) * step), 482),
+        inMaintenance: Math.min(Math.round((112 / steps) * step), 112),
+        activeTrips: Math.min(Math.round((956 / steps) * step), 956),
+        driversOnDuty: Math.min(Math.round((1180 / steps) * step), 1180),
+        utilization: parseFloat(Math.min((87.6 / steps) * step, 87.6).toFixed(1))
+      });
+
+      if (step >= steps) {
+        clearInterval(timer);
+      }
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const dispatches = [
     { id: 'TRK-9801', driver: 'Marcus Vance', destination: 'Chicago Hub (ORD1)', status: 'In Transit', ETA: '14:45' },
     { id: 'TRK-4421', driver: 'Elena Rostova', destination: 'Los Angeles Depot (LAX4)', status: 'Completed', ETA: 'Delivered' },
@@ -82,14 +118,25 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden relative">
+      
+      {/* Soft blurred logistics background representation */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.05] filter blur-[6px] pointer-events-none"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
+      ></div>
+
+      {/* Decorative colored glow blobs for glassmorphism highlights */}
+      <div className="absolute top-[10%] left-[20%] w-[350px] h-[350px] bg-blue-400/10 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-indigo-400/8 rounded-full blur-[120px] pointer-events-none"></div>
+
       {/* 1. Left Sidebar - Fixed & Professional Navy Theme */}
       <aside className="hidden md:flex flex-col w-64 border-r border-[#E5E7EB] bg-[#0F172A] p-6 justify-between flex-shrink-0 z-20">
         <div className="space-y-8">
           <Logo iconSize={26} textSize="text-lg" />
 
           {/* Nav links */}
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -97,7 +144,6 @@ export default function Dashboard() {
               { name: 'Fuel Management', icon: Droplet },
               { name: 'Active Fleets', icon: Truck, badge: '1,842' },
               { name: 'Live Tracking', icon: Navigation },
-              { name: 'Reports & Analytics', icon: TrendingUp },
               { name: 'Drivers', icon: Users },
               { name: 'Notifications', icon: Bell, badge: '12' },
               { name: 'System Settings', icon: Settings }
@@ -105,7 +151,7 @@ export default function Dashboard() {
               <button
                 key={item.name}
                 onClick={() => setActiveTab(item.name)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 ${
+                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.98] ${
                   activeTab === item.name
                     ? 'bg-[#2563EB] text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -149,10 +195,10 @@ export default function Dashboard() {
       </aside>
 
       {/* 2. Main content container */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-[#F5F7FA]">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-transparent z-10">
         
         {/* Minimal Navbar */}
-        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#E5E7EB] bg-white sticky top-0 z-10 shadow-xs">
+        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#E5E7EB] bg-white/80 backdrop-blur-md sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-4">
             {/* Mobile Menu Trigger */}
             <button
@@ -194,8 +240,9 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Dashboard Grid Content */}
-        <div className="flex-1 p-6 md:p-8 space-y-6">
+        {/* Dashboard Grid Content - 24px-32px margins and spacing */}
+        <div className="flex-1 p-6 md:p-8 space-y-8 animate-fadeIn">
+          
           {activeTab === 'Trip Management' ? (
             <TripManagement />
           ) : activeTab === 'Maintenance' ? (
@@ -208,26 +255,20 @@ export default function Dashboard() {
             <LiveTracking />
           ) : activeTab === 'Drivers' ? (
             <DriverManagement />
-          ) : activeTab === 'Reports & Analytics' ? (
-            <div className="p-8 rounded-2xl bg-white border border-[#E5E7EB] text-center space-y-4 shadow-sm">
-              <TrendingUp className="w-12 h-12 text-slate-400 mx-auto" />
-              <h3 className="font-display font-bold text-lg text-slate-800">Operational Report Hub</h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">Full visual fleet analytics, fuel efficiency quotients, and route optimization report metrics. To view consolidated charts, check the Overview tab dashboard.</p>
-            </div>
           ) : activeTab === 'Notifications' ? (
-            <div className="p-8 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-sm">
+            <div className="p-8 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-sm animate-slide-up-fade">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <h3 className="font-display font-bold text-lg text-slate-800">Control Center Inbox</h3>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">12 Unread Alerts</span>
               </div>
-              <div className="space-y-3.5">
+              <div className="space-y-4">
                 {[
                   { text: 'Urgent Weather Warning: Heavy rainfall in Midwest Region (ORD1). Redirection active.', type: 'warning' },
                   { text: 'Operator Elena Rostova license warning: Expiry date 2027-05-20.', type: 'info' },
                   { text: 'Vehicle TRK-9801 has completed dispatch leg: Chicago Hub.', type: 'success' },
                   { text: 'Maintenance Schedule Request: Volvo FH16 requires service interval.', type: 'info' }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-700">
+                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-white/50 border border-slate-200 text-xs font-medium text-slate-700 hover:scale-[1.01] transition-transform duration-200">
                     <span className={`w-2 h-2 rounded-full mt-1 ${
                       item.type === 'warning' ? 'bg-[#F59E0B]' :
                       item.type === 'success' ? 'bg-[#22C55E]' : 'bg-[#2563EB]'
@@ -242,83 +283,87 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Hero Banner Section with subtle blurred background truck image */}
-              <div className="relative overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white p-6 md:p-8 shadow-xs">
+              <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md p-6 md:p-8 shadow-xs animate-slide-up-fade [animation-delay:0ms]">
                 {/* Truck background with 6% opacity & blur */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[1px]"
                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
                 ></div>
-                {/* Soft gray overlay */}
-                <div className="absolute inset-0 bg-slate-900/[0.01]"></div>
                 
                 <div className="relative z-10 space-y-2">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
                     System Telemetry Online
                   </span>
                   <h2 className="font-display text-2xl font-extrabold text-[#0F172A]">Enterprise Logistics Console</h2>
-                  <p className="text-sm text-slate-500 max-w-2xl">
+                  <p className="text-sm text-slate-500 max-w-2xl leading-relaxed">
                     Real-time logistical monitoring, operator dispatch workflows, and fleet maintenance telemetry dashboard. Orchestrate routes, inspect payloads, and log expenses seamlessly.
                   </p>
                 </div>
               </div>
 
-              {/* Weather Alert banner */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 shadow-xs">
+              {/* Weather Alert banner - separated appropriately */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-amber-50/80 backdrop-blur-md border border-amber-200 text-amber-700 shadow-xs animate-slide-up-fade [animation-delay:50ms]">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
                   <div>
                     <p className="text-sm font-bold text-slate-900">Weather Alert: Midwest Region (ORD1)</p>
-                    <p className="text-xs text-slate-500 mt-0.5 font-medium">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
+                    <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
-                <button className="px-4 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-colors">
+                <button className="px-4 py-2 rounded-xl bg-amber-650 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-xs">
                   Manage Re-Routing
                 </button>
               </div>
 
-              {/* Summary Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+              {/* Summary Metric Cards - Equal height (items-stretch) & Staggered slide entrance */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-stretch">
                 {[
-                  { title: 'Active Vehicles', value: '1,248', desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true },
-                  { title: 'Available Vehicles', value: '482', desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true },
-                  { title: 'In Maintenance', value: '112', desc: 'At garage facility', icon: Wrench, trend: '-0.5%', up: false },
-                  { title: 'Active Trips', value: '956', desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true },
-                  { title: 'Drivers On Duty', value: '1,180', desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true },
-                  { title: 'Fleet Utilization', value: '87.6%', desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true }
+                  { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true },
+                  { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true },
+                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At garage facility', icon: Wrench, trend: '-0.5%', up: false },
+                  { title: 'Active Trips', value: kpis.activeTrips.toLocaleString(), desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true },
+                  { title: 'Drivers On Duty', value: kpis.driversOnDuty.toLocaleString(), desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true },
+                  { title: 'Fleet Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true }
                 ].map((stat, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl bg-white border border-[#E5E7EB] relative overflow-hidden group hover:border-[#2563EB] hover:shadow-md transition-all duration-200 shadow-xs">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 rounded-xl bg-slate-50 text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-200">
-                        <stat.icon className="w-5 h-5" />
+                  <div 
+                    key={idx} 
+                    className="p-5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 relative overflow-hidden group hover:scale-[1.02] hover:shadow-md hover:border-[#2563EB] transition-all duration-300 shadow-xs flex flex-col justify-between items-stretch animate-slide-up-fade"
+                    style={{ animationDelay: `${100 + idx * 50}ms` }}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-2 rounded-xl bg-slate-50 text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-200">
+                          <stat.icon className="w-5 h-5" />
+                        </div>
+                        <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                          stat.up ? 'bg-emerald-50 text-[#22C55E]' : 'bg-red-50 text-[#EF4444]'
+                        }`}>
+                          {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
+                          {stat.trend}
+                        </span>
                       </div>
-                      <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                        stat.up ? 'bg-emerald-50 text-[#22C55E]' : 'bg-red-50 text-[#EF4444]'
-                      }`}>
-                        {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
-                        {stat.trend}
-                      </span>
+                      <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 leading-tight truncate">{stat.title}</h3>
+                      <p className="text-2xl font-display font-extrabold text-slate-900 mb-1">{stat.value}</p>
                     </div>
-                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 leading-tight truncate">{stat.title}</h3>
-                    <p className="text-2xl font-display font-extrabold text-slate-900 mb-1">{stat.value}</p>
-                    <p className="text-[10px] text-slate-400 truncate leading-none">{stat.desc}</p>
+                    <p className="text-[10px] text-slate-400 mt-2 truncate leading-none">{stat.desc}</p>
                   </div>
                 ))}
               </div>
 
               {/* Large Analytics Visualization & Recent Dispatches Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 
                 {/* Left Column (Feeds + Quick Actions + Analytics charts) */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-8">
                   {/* Real-Time Dispatch Feeds */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:400ms]">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h2 className="font-display text-lg font-bold text-slate-900">Real-Time Dispatch Feeds</h2>
                         <p className="text-xs text-slate-400">Current tracking list for dispatch terminals</p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all duration-200 active:scale-[0.98]">
                           <Filter className="w-3.5 h-3.5" />
                           <span>Filter</span>
                         </button>
@@ -328,7 +373,7 @@ export default function Dashboard() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-[#E5E7EB] text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
+                          <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
                             <th className="pb-3 pr-4 pt-2 pl-4">Truck ID</th>
                             <th className="pb-3 pr-4 pt-2">Driver</th>
                             <th className="pb-3 pr-4 pt-2">Destination</th>
@@ -370,8 +415,8 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Recharts Analytics Section: Utilization Area Chart */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
+                  {/* Recharts Analytics Section: Utilization Area Chart - Glass Card */}
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:450ms]">
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900">Fleet Utilization Trend</h2>
                       <p className="text-xs text-slate-400">Active utilization percentage levels tracked weekly</p>
@@ -395,14 +440,14 @@ export default function Dashboard() {
                           <Tooltip
                             contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
                           />
-                          <Area type="monotone" dataKey="Utilization" name="Utilization Rate (%)" stroke="#2563EB" strokeWidth={2.5} fillOpacity={1} fill="url(#utilGrad)" />
+                          <Area type="monotone" dataKey="Utilization" name="Utilization Rate (%)" stroke="#2563EB" strokeWidth={2.5} fillOpacity={1} fill="url(#utilGrad)" isAnimationActive={true} animationDuration={1000} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
 
-                  {/* Recharts Analytics Section: Cost Bar Chart */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
+                  {/* Recharts Analytics Section: Cost Bar Chart - Glass Card */}
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-6 shadow-xs animate-slide-up-fade [animation-delay:500ms]">
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900">Fleet Cost Breakdown</h2>
                       <p className="text-xs text-slate-400">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
@@ -421,15 +466,15 @@ export default function Dashboard() {
                             contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
                           />
                           <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '10px', color: '#64748B' }} />
-                          <Bar dataKey="Fuel" name="Fuel Expenses ($)" fill="#2563EB" radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="Maintenance" name="Maintenance Cost ($)" fill="#0F172A" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="Fuel" name="Fuel Expenses ($)" fill="#2563EB" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1200} />
+                          <Bar dataKey="Maintenance" name="Maintenance Cost ($)" fill="#0F172A" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1200} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
 
-                  {/* Quick Actions Panel */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-4 shadow-xs">
+                  {/* Quick Actions Panel - Glass Card */}
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 space-y-4 shadow-xs animate-slide-up-fade [animation-delay:550ms]">
                     <h3 className="font-display text-sm font-bold text-slate-800">Quick Actions</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                       {[
@@ -442,9 +487,9 @@ export default function Dashboard() {
                         <button
                           key={idx}
                           onClick={() => setActiveTab(action.tab)}
-                          className="flex flex-col items-start p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-350 hover:shadow-xs text-left transition-all group"
+                          className="flex flex-col items-start p-4 rounded-xl border border-slate-200 bg-white/60 hover:bg-slate-50 hover:border-slate-350 hover:scale-[1.05] hover:shadow-xs text-left transition-all duration-300 group"
                         >
-                          <div className={`p-2 rounded-lg ${action.color} mb-3 group-hover:scale-105 transition-transform`}>
+                          <div className={`p-2 rounded-lg ${action.color} mb-3 group-hover:scale-105 transition-transform duration-300`}>
                             <action.icon className="w-4 h-4" />
                           </div>
                           <p className="text-xs font-bold text-slate-800 leading-tight">{action.name}</p>
@@ -455,10 +500,11 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Right Column (Map + GPS Telemetry Logs) */}
-                <div className="space-y-6">
-                  {/* Network Routing Map Card */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] flex flex-col h-[340px] shadow-xs">
+                {/* Right Column (Map + GPS Telemetry Logs) - Separated with gap-8 */}
+                <div className="space-y-8">
+                  
+                  {/* Network Routing Map Card - Glass Card */}
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 flex flex-col h-[340px] shadow-xs animate-slide-up-fade [animation-delay:600ms]">
                     <div>
                       <h2 className="font-display text-base font-bold text-slate-900">Network Routing Map</h2>
                       <p className="text-xs text-slate-400">Live visual feed of logistics grid</p>
@@ -472,17 +518,18 @@ export default function Dashboard() {
                         <path d="M100 200 Q 200 110 300 120" fill="none" stroke="#f59e0b" strokeWidth="2" />
                       </svg>
 
-                      <span className="absolute left-[50px] top-[80px] flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-blue-500"></span>
+                      {/* Marker Pulse Animations */}
+                      <span className="absolute left-[50px] top-[80px] flex h-3.5 w-3.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-sm border border-white"></span>
                       </span>
-                      <span className="absolute left-[220px] top-[70px] flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-blue-500"></span>
+                      <span className="absolute left-[220px] top-[70px] flex h-3.5 w-3.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-500 shadow-sm border border-white"></span>
                       </span>
-                      <span className="absolute left-[300px] top-[120px] flex h-3 w-3">
+                      <span className="absolute left-[300px] top-[120px] flex h-3.5 w-3.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 shadow-sm border border-white"></span>
                       </span>
 
                       <div className="absolute bottom-3 left-3 right-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800 backdrop-blur-md flex items-center justify-between text-[10px]">
@@ -500,8 +547,8 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* GPS Feed Logs (Terminal signal logs) */}
-                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs flex flex-col justify-between">
+                  {/* GPS Feed Logs (Terminal signal logs) - Glass Card */}
+                  <div className="p-6 rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 shadow-xs flex flex-col justify-between animate-slide-up-fade [animation-delay:650ms]">
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-display text-base font-bold text-slate-900">GPS Terminal Feed</h3>
@@ -518,7 +565,7 @@ export default function Dashboard() {
                         { time: '12:02:50', vehicle: 'TRK-5524', action: 'Route deviation warning triggered near Houston Beltway.', status: 'warn' },
                         { time: '12:02:10', vehicle: 'TRK-8843', action: 'Stopped at logistics base terminal Dallas North.', status: 'info' }
                       ].map((log, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                        <div key={idx} className="p-3.5 rounded-xl bg-white/50 border border-slate-200/80 space-y-1.5 hover:scale-[1.01] transition-transform">
                           <div className="flex justify-between items-center text-[10px]">
                             <span className="font-mono font-bold text-[#2563EB] flex items-center gap-1">
                               <MapPin className="w-3 h-3" />
@@ -542,6 +589,7 @@ export default function Dashboard() {
                       Auto-refresh active (interval: 5000ms)
                     </div>
                   </div>
+
                 </div>
 
               </div>
@@ -552,7 +600,7 @@ export default function Dashboard() {
 
       {/* Mobile Drawer Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#0F172A]/95 z-45 flex flex-col p-6 md:hidden animate-fadeIn">
+        <div className="fixed inset-0 bg-[#0F172A]/95 z-40 flex flex-col p-6 md:hidden animate-fadeIn">
           <div className="flex items-center justify-between border-b border-slate-800 pb-5 mb-6">
             <Logo iconSize={26} textSize="text-lg" />
             <button
@@ -563,7 +611,7 @@ export default function Dashboard() {
             </button>
           </div>
           
-          <nav className="flex-1 space-y-1 overflow-y-auto">
+          <nav className="flex-1 space-y-1.5 overflow-y-auto">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -571,7 +619,6 @@ export default function Dashboard() {
               { name: 'Fuel Management', icon: Droplet },
               { name: 'Active Fleets', icon: Truck, badge: '1,842' },
               { name: 'Live Tracking', icon: Navigation },
-              { name: 'Reports & Analytics', icon: TrendingUp },
               { name: 'Drivers', icon: Users },
               { name: 'Notifications', icon: Bell, badge: '12' },
               { name: 'System Settings', icon: Settings }
@@ -582,7 +629,7 @@ export default function Dashboard() {
                   setActiveTab(item.name);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all active:scale-[0.98] ${
                   activeTab === item.name
                     ? 'bg-[#2563EB] text-white shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800'
