@@ -37,28 +37,28 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative p-4 animate-fadeIn">
+    <div className="flex min-h-screen w-full bg-[#050814] text-slate-100 font-sans overflow-hidden items-center justify-center relative p-4 animate-fadeIn">
       {/* Background animated floating glow blobs */}
       <div 
-        className="absolute top-[10%] -left-20 w-[450px] h-[450px] bg-blue-500/8 rounded-full blur-[100px] pointer-events-none animate-float"
+        className="absolute top-[10%] -left-20 w-[450px] h-[450px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none animate-float"
         style={{ animationDelay: '0s' }}
       ></div>
       <div 
-        className="absolute bottom-[10%] right-[-100px] w-[500px] h-[500px] bg-indigo-500/6 rounded-full blur-[120px] pointer-events-none animate-float"
+        className="absolute bottom-[10%] right-[-100px] w-[500px] h-[500px] bg-indigo-500/8 rounded-full blur-[120px] pointer-events-none animate-float"
         style={{ animationDelay: '3s' }}
       ></div>
 
-      {/* Main Container - Split Left/Right Layout (responsive) with page entrance animation */}
-      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-xl overflow-hidden relative z-10 animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
+      {/* Main Container - Split Left/Right Layout (responsive) with glassmorphism styling */}
+      <div className="flex w-full max-w-5xl h-[640px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden relative z-10 animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
         
         {/* Left Side: Professional SaaS Branding Showcase (hidden on mobile) */}
-        <div className="hidden md:flex md:w-1/2 bg-[#0F172A] p-12 flex-col justify-between relative overflow-hidden text-white">
+        <div className="hidden md:flex md:w-1/2 bg-[#0b0f19]/80 p-12 flex-col justify-between relative overflow-hidden border-r border-white/5 text-white">
           {/* Subtle blurred truck image overlay in background */}
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10 filter blur-[1px]"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.04] filter blur-[1px]"
             style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
           ></div>
-          <div className="absolute inset-0 bg-slate-900/40"></div>
+          <div className="absolute inset-0 bg-slate-950/40"></div>
 
           <div className="relative z-10">
             <Logo textSize="text-xl" iconSize={28} />
@@ -69,7 +69,7 @@ export default function Login() {
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>
               Global Fleet Control Active
             </span>
-            <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight">
+            <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-white">
               Enterprise Logistics & Operations Console
             </h1>
             <p className="text-slate-400 text-sm leading-relaxed">
@@ -86,20 +86,20 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Right Side: Clean Login Form */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-white">
+        {/* Right Side: Clean Dark Glass Login Form */}
+        <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-slate-900/30 backdrop-blur-md">
           <div className="w-full max-w-sm mx-auto flex flex-col gap-6">
             
             {/* Header - Staggered delay */}
             <div className="flex flex-col gap-1 animate-slide-up-fade" style={{ animationDelay: '100ms' }}>
-              <h2 className="font-display text-2xl font-extrabold text-slate-900 tracking-tight">Operator Sign In</h2>
-              <p className="text-xs text-slate-500">Enter your credentials to access your control workstation.</p>
+              <h2 className="font-display text-2xl font-extrabold text-white tracking-tight">Operator Sign In</h2>
+              <p className="text-xs text-slate-400">Enter your credentials to access your control workstation.</p>
             </div>
 
             {/* Error alerts - Staggered delay */}
             {error && (
-              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium animate-shake">
-                <ShieldAlert className="w-4 h-4 text-red-600 flex-shrink-0" />
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium animate-shake">
+                <ShieldAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -112,7 +112,7 @@ export default function Login() {
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Control Room Email</label>
                 <div className="relative flex items-center">
                   <Mail 
-                    className="text-slate-400" 
+                    className="text-slate-500" 
                     style={{ position: 'absolute', left: '0.85rem', width: '1rem', height: '1rem', pointerEvents: 'none' }}
                   />
                   <input
@@ -122,7 +122,7 @@ export default function Login() {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
                     style={{ paddingLeft: '2.75rem', paddingRight: '1rem' }}
-                    className="w-full py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-300"
+                    className="w-full py-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-700"
                   />
                 </div>
               </div>
@@ -131,11 +131,11 @@ export default function Login() {
               <div className="flex flex-col gap-2 animate-slide-up-fade" style={{ animationDelay: '300ms' }}>
                 <div className="flex justify-between items-center">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Workstation Password</label>
-                  <a href="#" className="text-xs text-brand-blue-600 hover:underline">Forgot?</a>
+                  <a href="#" className="text-xs text-blue-400 hover:underline">Forgot?</a>
                 </div>
                 <div className="relative flex items-center">
                   <Lock 
-                    className="text-slate-400" 
+                    className="text-slate-500" 
                     style={{ position: 'absolute', left: '0.85rem', width: '1rem', height: '1rem', pointerEvents: 'none' }}
                   />
                   <input
@@ -145,12 +145,12 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
                     style={{ paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
-                    className="w-full py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-300"
+                    className="w-full py-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-700"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 text-slate-400 hover:text-slate-700 focus:outline-none transition-colors"
+                    className="absolute right-3 text-slate-500 hover:text-slate-350 focus:outline-none transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -164,9 +164,9 @@ export default function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-brand-blue-600 focus:ring-blue-500/20 cursor-pointer"
+                  className="w-4 h-4 rounded border-slate-800 bg-slate-950 text-blue-600 focus:ring-blue-500/20 cursor-pointer"
                 />
-                <label htmlFor="remember" className="ml-2 text-xs text-slate-500 cursor-pointer select-none">
+                <label htmlFor="remember" className="ml-2 text-xs text-slate-400 cursor-pointer select-none">
                   Remember my workstation
                 </label>
               </div>
@@ -175,7 +175,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-60 shadow-md shadow-blue-500/10 animate-slide-up-fade"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] transition-all disabled:opacity-60 shadow-lg shadow-blue-500/10 animate-slide-up-fade"
                 style={{ transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', animationDelay: '500ms' }}
               >
                 {isLoading ? (
@@ -192,9 +192,9 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100 mt-2 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
+            <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-850 mt-2 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
               Need assistance?{' '}
-              <a href="#" className="font-semibold text-brand-blue-600 hover:underline">Contact System Admin</a>
+              <a href="#" className="font-semibold text-blue-400 hover:underline">Contact System Admin</a>
             </div>
 
           </div>
