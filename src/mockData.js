@@ -60,3 +60,16 @@ export const DEFAULT_DRIVERS = [
         status: "Suspended"
     }
 ];
+
+export const DEFAULT_VEHICLES = [
+    { id: "vh_1", name: "Volvo FH16", plateNumber: "TX-9842", capacity: "25 Tons", status: "Available" },
+    { id: "vh_2", name: "Mercedes Actros", plateNumber: "CA-4859", capacity: "20 Tons", status: "On Trip" },
+    { id: "vh_3", name: "Scania R500", plateNumber: "NY-2849", capacity: "22 Tons", status: "Available" },
+    { id: "vh_4", name: "Isuzu Giga", plateNumber: "FL-1029", capacity: "15 Tons", status: "Available" }
+];
+
+export const DEFAULT_TRIPS = [
+    { id: "tr_1", route: "Chicago to New York", driverId: "drv_2", vehicleId: "vh_2", status: "Dispatched" },
+    { id: "tr_2", route: "Houston to Dallas", driverId: "drv_1", vehicleId: "vh_1", status: "Pending" }
+];
+
