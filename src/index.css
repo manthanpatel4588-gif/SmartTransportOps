@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
+
+  --color-brand-blue-50: #f0f7ff;
+  --color-brand-blue-100: #e0f2fe;
+  --color-brand-blue-200: #bae6fd;
+  --color-brand-blue-300: #7dd3fc;
+  --color-brand-blue-400: #38bdf8;
+  --color-brand-blue-500: #0ea5e9;
+  --color-brand-blue-600: #0284c7;
+  --color-brand-blue-700: #0369a1;
+  --color-brand-blue-800: #07557e;
+  --color-brand-blue-900: #0c4a6e;
+  --color-brand-blue-950: #082f49;
+
+  --color-brand-navy-50: #f8fafc;
+  --color-brand-navy-100: #f1f5f9;
+  --color-brand-navy-200: #e2e8f0;
+  --color-brand-navy-300: #cbd5e1;
+  --color-brand-navy-400: #94a3b8;
+  --color-brand-navy-500: #64748b;
+  --color-brand-navy-600: #475569;
+  --color-brand-navy-700: #334155;
+  --color-brand-navy-800: #1e293b;
+  --color-brand-navy-900: #0f172a;
+  --color-brand-navy-950: #0b0f19;
+
+  --color-accent-emerald-500: #10b981;
+  --color-accent-amber-500: #f59e0b;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-navy-950);
+  color: var(--color-brand-navy-100);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-navy-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-navy-700);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-blue-600);
+}
