@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LogOut,
@@ -12,8 +12,6 @@ import {
   Bell,
   Search,
   Filter,
-  ArrowUpRight,
-  ArrowDownRight,
   Wrench,
   Users,
   CheckCircle,
@@ -22,7 +20,12 @@ import {
   X,
   DollarSign,
   List,
-  MapPin
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  Activity,
+  ChevronDown
 } from 'lucide-react';
 import {
   AreaChart,
@@ -50,6 +53,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Animated KPI Counters State
   const [kpis, setKpis] = useState({
@@ -60,6 +66,17 @@ export default function Dashboard() {
     driversOnDuty: 0,
     utilization: 0
   });
+
+  useEffect(() => {
+    // Close dropdown on click outside
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // Staggered KPI Count-up animation on mount
@@ -120,23 +137,37 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen w-full bg-[#F3F4F6] text-[#111827] font-sans overflow-hidden relative">
       
-      {/* Soft blurred logistics background representation (3-5% opacity) */}
+      {/* Very subtle blurred logistics background image (only 3-5% opacity) */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.04] filter blur-[1px] pointer-events-none"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.03] filter blur-[1px] pointer-events-none"
         style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
       ></div>
-      <div className="absolute inset-0 bg-slate-100/10 pointer-events-none"></div>
 
-      {/* 1. Left Sidebar - Fixed & Premium Dark Sidebar (#111827) */}
-      <aside className="hidden md:flex flex-col w-72 border-r border-white/5 bg-[#111827] p-8 justify-between flex-shrink-0 z-20">
-        <div className="flex flex-col gap-10">
+      {/* 1. Left Sidebar - Fixed Dark Sidebar with Collapse Support */}
+      <aside 
+        className={`hidden md:flex flex-col border-r border-white/5 bg-[#111827] p-6 justify-between flex-shrink-0 z-20 transition-all duration-300 ${
+          isSidebarCollapsed ? 'w-20' : 'w-[280px]'
+        }`}
+      >
+        <div className="flex flex-col gap-8">
           {/* Logo container inside sidebar */}
-          <div className="bg-slate-900 px-4 py-3 rounded-xl border border-slate-850 shadow-md">
-            <Logo iconSize={22} textSize="text-base" />
+          <div className="flex items-center justify-between">
+            <div className={`overflow-hidden transition-all duration-300 ${isSidebarCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
+              <Logo iconSize={20} textSize="text-sm" />
+            </div>
+            
+            {/* Collapse toggle button */}
+            <button 
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 self-center transition-colors shadow-sm"
+              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
           </div>
 
-          {/* Nav links with gap-3.5 spacing */}
-          <nav className="flex flex-col gap-3.5">
+          {/* Nav links with gap-2.5 spacing */}
+          <nav className="flex flex-col gap-2.5">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -151,17 +182,20 @@ export default function Dashboard() {
               <button
                 key={item.name}
                 onClick={() => setActiveTab(item.name)}
-                className={`w-full flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-4 ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-4 ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-blue-400'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.25)] border-blue-400'
                     : 'text-slate-400 border-transparent hover:text-white hover:bg-slate-800'
                 }`}
+                title={isSidebarCollapsed ? item.name : undefined}
               >
                 <div className="flex items-center gap-3">
-                  <item.icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+                  <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
+                  <span className={`transition-all duration-300 ${isSidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
+                    {item.name}
+                  </span>
                 </div>
-                {item.badge && (
+                {!isSidebarCollapsed && item.badge && (
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                     activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
                   }`}>
@@ -173,23 +207,24 @@ export default function Dashboard() {
           </nav>
         </div>
 
-        {/* User Card & Logout */}
-        <div className="border-t border-slate-800 pt-6 space-y-4">
-          <div className="flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2563EB] to-blue-500 flex items-center justify-center font-display font-bold text-white shadow-md shadow-blue-500/10">
+        {/* User Profile Card & Sign Out */}
+        <div className="border-t border-slate-800 pt-6 flex flex-col gap-4">
+          <div className="flex items-center gap-3 px-1">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2563EB] to-blue-500 flex items-center justify-center font-display font-bold text-white shadow-md shadow-blue-500/10 flex-shrink-0">
               OP
             </div>
-            <div>
-              <p className="text-sm font-bold text-white">Operator #402</p>
-              <p className="text-xs text-slate-400">Control Center 2</p>
+            <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'w-0 opacity-0 hidden' : 'w-auto opacity-100'}`}>
+              <p className="text-xs font-bold text-white leading-tight">Operator #402</p>
+              <p className="text-[10px] text-slate-500 font-semibold">Control Center 2</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-150"
+            className="w-full flex items-center gap-3 px-3.5 py-2 rounded-lg text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all"
+            title={isSidebarCollapsed ? "Sign Out" : undefined}
           >
-            <LogOut className="w-4 h-4" />
-            <span>Operator Sign Out</span>
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            <span className={isSidebarCollapsed ? 'hidden' : 'inline'}>Operator Sign Out</span>
           </button>
         </div>
       </aside>
@@ -197,50 +232,88 @@ export default function Dashboard() {
       {/* 2. Main content container */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-transparent z-10">
         
-        {/* Minimal Navbar */}
-        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#E5E7EB] bg-white sticky top-0 z-20 shadow-xs">
+        {/* Minimal Navbar with Clean Glass Effect */}
+        <header className="flex items-center justify-between px-8 py-4 border-b border-[#E5E7EB] bg-white/85 backdrop-blur-md sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-4">
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 rounded-lg bg-white border border-[#E5E7EB] text-slate-600 hover:text-[#111827] md:hidden"
+              className="p-2 rounded-lg bg-white border border-[#E5E7EB] text-slate-650 hover:text-[#111827] md:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="font-display text-xl font-extrabold tracking-tight text-[#111827]">{activeTab}</h1>
+            <div className="hidden sm:block">
+              <span className="text-[10px] uppercase tracking-wider text-[#6B7280] font-bold">Logistics Command Console</span>
             </div>
           </div>
 
-          {/* Header Controls */}
-          <div className="flex items-center gap-3">
-            {/* Search Bar */}
-            <div className="relative hidden lg:block">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search fleets, routes, drivers..."
-                className="w-60 pl-10 pr-4 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
-              />
-            </div>
+          {/* Centered Search Bar */}
+          <div className="flex-1 max-w-lg mx-8 relative hidden md:block">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search operators, dispatches, fleets, logs..."
+              className="w-full pl-10 pr-4 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
+            />
+          </div>
 
+          {/* Header Controls & Profile Dropdown */}
+          <div className="flex items-center gap-4">
             {/* Notification Bell */}
             <button className="relative p-2 rounded-lg bg-white border border-[#E5E7EB] text-[#6B7280] hover:text-[#111827] transition-all">
               <Bell className="w-4 h-4" />
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#2563EB]"></span>
             </button>
 
-            {/* Mobile Logout */}
-            <button
-              onClick={handleLogout}
-              className="md:hidden p-2 rounded-lg bg-white border border-[#E5E7EB] text-red-500 hover:bg-red-55 transition-all"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+            {/* User Profile dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                className="flex items-center gap-2 p-1.5 rounded-lg border border-[#E5E7EB] hover:bg-slate-50 transition-all text-left"
+              >
+                <div className="w-6.5 h-6.5 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                  OP
+                </div>
+                <span className="text-xs font-semibold text-[#111827] hidden lg:inline">Operator 402</span>
+                <ChevronDown className="w-3.5 h-3.5 text-[#6B7280]" />
+              </button>
+
+              {/* Profile dropdown menu options */}
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#E5E7EB] rounded-xl shadow-md py-1.5 z-30 animate-fadeIn">
+                  <div className="px-4 py-2 border-b border-slate-100">
+                    <p className="text-xs font-bold text-[#111827]">Super Operator</p>
+                    <p className="text-[10px] text-slate-500 font-semibold">manthan@smartops.com</p>
+                  </div>
+                  <button
+                    onClick={() => { setActiveTab('System Settings'); setIsProfileDropdownOpen(false); }}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 text-left"
+                  >
+                    <User className="w-3.5 h-3.5 text-slate-500" />
+                    <span>My Profile</span>
+                  </button>
+                  <button
+                    onClick={() => { setActiveTab('Notifications'); setIsProfileDropdownOpen(false); }}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 text-left"
+                  >
+                    <Activity className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Control Inbox</span>
+                  </button>
+                  <div className="border-t border-slate-100 my-1"></div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 text-left"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-red-650" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        {/* Dashboard Grid Content - p-8 md:p-10 and gap-10 gives the absolute spaciest feel! */}
+        {/* Dashboard Grid Content - 32px vertical spacing between sections (gap-8/gap-10) and 32px padding (p-8/p-10) */}
         <div className="p-8 md:p-10 flex flex-col gap-10 w-full min-h-screen animate-fadeIn">
           
           {activeTab === 'Trip Management' ? (
@@ -256,7 +329,7 @@ export default function Dashboard() {
           ) : activeTab === 'Drivers' ? (
             <DriverManagement />
           ) : activeTab === 'Notifications' ? (
-            <div className="p-8 rounded-[20px] bg-white border border-[#E5E7EB] space-y-6 shadow-xs animate-slide-up-fade">
+            <div className="p-8 rounded-[20px] bg-white border border-[#E5E7EB] space-y-6 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05)] animate-slide-up-fade">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <h3 className="font-display font-bold text-lg text-[#111827]">Control Center Inbox</h3>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE]">12 Unread Alerts</span>
@@ -283,12 +356,12 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Hero Banner Section with subtle blurred background truck image (3-5% opacity) */}
-              <div className="relative overflow-hidden rounded-[20px] border border-[#E5E7EB] bg-white p-8 shadow-xs transition-all duration-300 hover:shadow-sm animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
+              <div className="relative overflow-hidden rounded-[20px] border border-[#E5E7EB] bg-white p-8 shadow-xs transition-all duration-350 hover:shadow-sm animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.04] filter blur-[1px]"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.03]"
                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
                 ></div>
-                <div className="absolute inset-0 bg-slate-100/10"></div>
+                <div className="absolute inset-0 bg-slate-100/5"></div>
                 
                 <div className="relative z-10 flex flex-col gap-3">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] self-start">
@@ -317,43 +390,42 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              {/* Summary Metric Cards - 3-column grid (lg:grid-cols-3) to double card horizontal space */}
-              {/* Uses rounded-[20px], p-8 (32px padding), and min-h-[190px] for massive visual balance */}
+              {/* Summary Metric Cards - One Row KPI layout on desktop (lg:grid-cols-6) */}
+              {/* Uses rounded-[20px], p-6 for a single compact row, and min-h-[160px] */}
               {/* Bigger Icons inside solid colored circular backgrounds for high-end SaaS feel */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full animate-fadeIn">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-stretch w-full animate-fadeIn">
                 {[
                   { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, badgeBg: 'bg-[#2563EB]', iconColor: 'text-white', glow: 'shadow-blue-500/10' },
                   { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true, badgeBg: 'bg-[#22C55E]', iconColor: 'text-white', glow: 'shadow-emerald-500/10' },
-                  { title: 'Vehicles In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At workshop facility', icon: Wrench, trend: '-0.5%', up: false, badgeBg: 'bg-[#EF4444]', iconColor: 'text-white', glow: 'shadow-rose-500/10' },
+                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At workshop', icon: Wrench, trend: '-0.5%', up: false, badgeBg: 'bg-[#EF4444]', iconColor: 'text-white', glow: 'shadow-rose-500/10' },
                   { title: 'Active Trips', value: kpis.activeTrips.toLocaleString(), desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true, badgeBg: 'bg-[#6366F1]', iconColor: 'text-white', glow: 'shadow-indigo-500/10' },
                   { title: 'Drivers On Duty', value: kpis.driversOnDuty.toLocaleString(), desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true, badgeBg: 'bg-[#8B5CF6]', iconColor: 'text-white', glow: 'shadow-purple-500/10' },
-                  { title: 'Fleet Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true, badgeBg: 'bg-[#06B6D4]', iconColor: 'text-white', glow: 'shadow-cyan-500/10' }
+                  { title: 'Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true, badgeBg: 'bg-[#06B6D4]', iconColor: 'text-white', glow: 'shadow-cyan-500/10' }
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-8 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[195px] animate-slide-up-fade"
+                    className="p-6 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[175px] animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
-                    <div className="relative z-10 flex flex-col justify-between h-full gap-5">
+                    <div className="relative z-10 flex flex-col justify-between h-full gap-4">
                       <div className="flex justify-between items-center">
                         {/* Circular solid background for icons */}
-                        <div className={`w-12 h-12 rounded-full ${stat.badgeBg} ${stat.iconColor} ${stat.glow} flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-md`}>
-                          <stat.icon className="w-5.5 h-5.5" />
+                        <div className={`w-10 h-10 rounded-full ${stat.badgeBg} ${stat.iconColor} ${stat.glow} flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-md`}>
+                          <stat.icon className="w-5 h-5" />
                         </div>
-                        <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-2.5 py-0.75 rounded-full border ${
+                        <span className={`inline-flex items-center gap-0.5 text-[9px] font-bold px-2 py-0.5 rounded-full border ${
                           stat.up 
                             ? 'bg-[#E6F4EA] text-[#137333] border-[#CEEAD6]' 
                             : 'bg-[#FCE8E6] text-[#C5221F] border-[#FAD2CF]'
                         }`}>
-                          {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                           {stat.trend}
                         </span>
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#6B7280] leading-tight">{stat.title}</h3>
-                        <p className="text-3xl font-display font-black text-[#111827] tracking-tight leading-none">{stat.value}</p>
+                      <div className="flex flex-col gap-1">
+                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] leading-tight">{stat.title}</h3>
+                        <p className="text-2xl font-display font-black text-[#111827] tracking-tight leading-none">{stat.value}</p>
                       </div>
-                      <p className="text-xs text-[#6B7280] font-semibold leading-relaxed mt-1">{stat.desc}</p>
+                      <p className="text-[10px] text-[#6B7280] font-semibold leading-relaxed">{stat.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -492,9 +564,9 @@ export default function Dashboard() {
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                       {[
                         { name: 'New Trip', desc: 'Create a new trip', icon: Compass, tab: 'Trip Management', color: 'text-[#2563EB] bg-[#EFF6FF] border border-[#DBEAFE]' },
-                        { name: 'Schedule Maintenance', desc: 'Add maintenance task', icon: Wrench, tab: 'Maintenance', color: 'text-purple-600 bg-purple-50 border border-purple-100' },
-                        { name: 'Add Fuel Log', desc: 'Record fuel entry', icon: Droplet, tab: 'Fuel Management', color: 'text-cyan-600 bg-cyan-50 border border-cyan-100' },
-                        { name: 'Add Expense', desc: 'Record other expense', icon: DollarSign, tab: 'System Settings', color: 'text-amber-600 bg-amber-50 border border-[#FDE68A]' },
+                        { name: 'Schedule Maintenance', desc: 'Add maintenance task', icon: Wrench, tab: 'Maintenance', color: 'text-purple-600 bg-purple-55 border border-purple-100' },
+                        { name: 'Add Fuel Log', desc: 'Record fuel entry', icon: Droplet, tab: 'Fuel Management', color: 'text-cyan-600 bg-cyan-55 border border-cyan-100' },
+                        { name: 'Add Expense', desc: 'Record other expense', icon: DollarSign, tab: 'System Settings', color: 'text-amber-600 bg-amber-55 border border-[#FDE68A]' },
                         { name: 'View Reports', desc: 'Analytics & insights', icon: TrendingUp, tab: 'Overview', color: 'text-indigo-650 bg-[#EEF2FF] border border-[#E0E7FF]' }
                       ].map((action, idx) => (
                         <button
@@ -594,7 +666,7 @@ export default function Dashboard() {
                               log.status === 'success' ? 'bg-[#22C55E]' :
                               log.status === 'warn' ? 'bg-[#F59E0B]' : 'bg-[#2563EB]'
                             }`}></span>
-                            <span className="text-[9px] uppercase font-bold text-slate-550">{log.status}</span>
+                            <span className="text-[9px] uppercase font-bold text-slate-555">{log.status}</span>
                           </div>
                         </div>
                       ))}
@@ -649,7 +721,7 @@ export default function Dashboard() {
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all active:scale-[0.98] ${
                   activeTab === item.name
                     ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-l-4 border-blue-400'
-                    : 'text-slate-650 hover:text-[#111827] hover:bg-slate-100'
+                    : 'text-slate-655 hover:text-[#111827] hover:bg-slate-100'
                 }`}
               >
                 <div className="flex items-center gap-3">

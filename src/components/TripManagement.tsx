@@ -243,16 +243,16 @@ export default function TripManagement() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fadeIn">
       {/* Title & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border-b border-slate-200 pb-6">
         <div>
-          <h2 className="font-display text-2xl font-extrabold tracking-tight text-slate-900">Trip Management</h2>
-          <p className="text-xs text-slate-500">Plan dispatch operations, manage payloads, and track routes</p>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-[#111827]">Trip Management</h2>
+          <p className="text-sm text-[#6B7280] font-semibold mt-1">Plan dispatch operations, manage payloads, and track routes</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all self-start sm:self-center shadow-xs"
+          className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-[#2563EB] hover:bg-blue-700 active:scale-[0.98] transition-all self-start sm:self-center shadow-md shadow-blue-500/10"
         >
           <Plus className="w-4 h-4" />
           <span>Create Trip</span>
@@ -260,7 +260,7 @@ export default function TripManagement() {
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
+      <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between p-6 rounded-[20px] bg-white border border-[#E5E7EB] shadow-xs">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -269,20 +269,20 @@ export default function TripManagement() {
             placeholder="Search trips by ID, route, vehicle, driver..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-sm text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
           />
         </div>
 
         {/* Tab Filters */}
-        <div className="flex flex-wrap gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-250 self-start lg:self-center">
+        <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-slate-100 border border-[#E5E7EB] self-start lg:self-center font-semibold">
           {['All', 'Draft', 'Dispatched', 'Completed', 'Cancelled'].map((tab) => (
             <button
               key={tab}
               onClick={() => setStatusFilter(tab)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs transition-all ${
                 statusFilter === tab
-                  ? 'bg-brand-blue-600 text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'bg-[#2563EB] text-white shadow-xs'
+                  : 'text-slate-500 hover:text-[#111827]'
               }`}
             >
               {tab}
@@ -293,81 +293,81 @@ export default function TripManagement() {
 
       {/* Trips display grid/table */}
       {filteredTrips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 rounded-2xl bg-white border border-slate-200 border-dashed text-center">
-          <div className="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-400 mb-4">
+        <div className="flex flex-col items-center justify-center p-20 rounded-[20px] bg-white border border-[#E5E7EB] border-dashed text-center">
+          <div className="p-4 rounded-full bg-[#F9FAFB] border border-[#E5E7EB] text-slate-400 mb-4">
             <Truck className="w-8 h-8" />
           </div>
           <h3 className="font-display font-semibold text-lg text-slate-800">No trips found</h3>
-          <p className="text-xs text-slate-400 mt-1 max-w-sm">
+          <p className="text-xs text-slate-400 mt-1 max-w-sm font-semibold">
             Try adjusting your search query or status filter, or create a new route dispatch.
           </p>
         </div>
       ) : (
         <>
           {/* Desktop Table View */}
-          <div className="hidden md:block overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-xs">
+          <div className="hidden md:block overflow-hidden rounded-[20px] bg-white border border-[#E5E7EB] shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/60">
-                    <th className="p-4 pl-6">Trip ID</th>
-                    <th className="p-4">Source Route</th>
-                    <th className="p-4">Destination</th>
-                    <th className="p-4">Vehicle & Payload</th>
-                    <th className="p-4">Assigned Driver</th>
-                    <th className="p-4">Status</th>
-                    <th className="p-4 pr-6 text-right">Actions</th>
+                  <tr className="border-b border-[#E5E7EB] text-xs font-bold uppercase tracking-wider text-[#6B7280] bg-[#F9FAFB]">
+                    <th className="p-5 pl-6">Trip ID</th>
+                    <th className="p-5">Source Route</th>
+                    <th className="p-5">Destination</th>
+                    <th className="p-5">Vehicle & Payload</th>
+                    <th className="p-5">Assigned Driver</th>
+                    <th className="p-5">Status</th>
+                    <th className="p-5 pr-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-slate-100 text-sm text-slate-850">
                   {filteredTrips.map((trip) => (
-                    <tr key={trip.id} className="group hover:bg-slate-50/40 transition-colors">
-                      <td className="p-4 pl-6 font-mono font-bold text-brand-blue-600">{trip.id}</td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-3.5 h-3.5 text-slate-450" />
-                          <span className="text-slate-800 font-medium">{trip.source}</span>
+                    <tr key={trip.id} className="group hover:bg-[#F9FAFB] transition-colors">
+                      <td className="p-5 pl-6 font-mono font-bold text-[#2563EB]">{trip.id}</td>
+                      <td className="p-5">
+                        <div className="flex items-center gap-2 font-semibold">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                          <span className="text-slate-800">{trip.source}</span>
                         </div>
                       </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <Navigation className="w-3.5 h-3.5 text-slate-455 rotate-45" />
-                          <span className="text-slate-800 font-medium">{trip.destination}</span>
+                      <td className="p-5">
+                        <div className="flex items-center gap-2 font-semibold">
+                          <Navigation className="w-3.5 h-3.5 text-slate-400 rotate-45" />
+                          <span className="text-slate-800">{trip.destination}</span>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-1.5 text-xs text-slate-800 font-semibold">
-                            <Truck className="w-3.5 h-3.5 text-slate-400" />
+                          <div className="flex items-center gap-1.5 text-xs text-[#111827] font-bold">
+                            <Truck className="w-3.5 h-3.5 text-slate-450" />
                             <span>{trip.vehicle}</span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold">
                             <Weight className="w-3.5 h-3.5" />
                             <span>{(trip.cargoWeight).toLocaleString()} kg · {trip.plannedDistance} km</span>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5 font-semibold">
                         <div className="flex items-center gap-2.5">
                           <img
-                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(trip.driver)}&background=f0f7ff&color=0284c7&bold=true&rounded=true&size=28`}
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(trip.driver)}&background=f0f7ff&color=2563eb&bold=true&rounded=true&size=28`}
                             alt={trip.driver}
-                            className="w-6.5 h-6.5 rounded-full object-cover"
+                            className="w-6.5 h-6.5 rounded-full object-cover shadow-xs"
                           />
-                          <span className="text-slate-700 font-medium">{trip.driver}</span>
+                          <span className="text-slate-700">{trip.driver}</span>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                          trip.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                          trip.status === 'Dispatched' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                          trip.status === 'Cancelled' ? 'bg-red-50 text-red-600 border border-red-100' :
-                          'bg-slate-105 text-slate-500 border border-slate-200'
+                          trip.status === 'Completed' ? 'bg-[#E6F4EA] text-[#137333] border border-[#CEEAD6]' :
+                          trip.status === 'Dispatched' ? 'bg-[#E8F0FE] text-[#1A73E8] border border-[#D2E3FC]' :
+                          trip.status === 'Cancelled' ? 'bg-[#FCE8E6] text-[#C5221F] border border-[#FAD2CF]' :
+                          'bg-slate-100 text-slate-500 border border-slate-200'
                         }`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${
-                            trip.status === 'Completed' ? 'bg-emerald-500' :
-                            trip.status === 'Dispatched' ? 'bg-blue-500' :
-                            trip.status === 'Cancelled' ? 'bg-red-500' :
+                            trip.status === 'Completed' ? 'bg-[#137333]' :
+                            trip.status === 'Dispatched' ? 'bg-[#1A73E8]' :
+                            trip.status === 'Cancelled' ? 'bg-[#C5221F]' :
                             'bg-slate-400'
                           }`}></span>
                           {trip.status}
