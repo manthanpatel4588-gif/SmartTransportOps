@@ -130,16 +130,16 @@ export default function Dashboard() {
       <div className="absolute top-[10%] left-[20%] w-[350px] h-[350px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '6000ms' }}></div>
       <div className="absolute bottom-[20%] right-[10%] w-[400px] h-[400px] bg-indigo-500/8 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '8000ms' }}></div>
 
-      {/* 1. Left Sidebar - Fixed & Premium Dark Glass Theme */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-white/5 bg-[#0b0f19]/70 backdrop-blur-xl p-6 justify-between flex-shrink-0 z-20">
-        <div className="flex flex-col gap-8">
+      {/* 1. Left Sidebar - Fixed, w-72 (spaciest width) & Premium Dark Glass Theme */}
+      <aside className="hidden md:flex flex-col w-72 border-r border-white/5 bg-[#0b0f19]/70 backdrop-blur-xl p-8 justify-between flex-shrink-0 z-20">
+        <div className="flex flex-col gap-10">
           {/* Logo container inside sidebar */}
-          <div className="bg-slate-950/40 px-4 py-3 rounded-xl border border-slate-900 shadow-md">
+          <div className="bg-slate-955 px-4 py-3 rounded-xl border border-slate-900 shadow-md">
             <Logo iconSize={22} textSize="text-base" />
           </div>
 
-          {/* Nav links */}
-          <nav className="flex flex-col gap-2">
+          {/* Nav links with gap-3.5 spacing */}
+          <nav className="flex flex-col gap-3.5">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -154,10 +154,10 @@ export default function Dashboard() {
               <button
                 key={item.name}
                 onClick={() => setActiveTab(item.name)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-4 ${
+                className={`w-full flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-4 ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-blue-400'
-                    : 'text-slate-405 border-transparent hover:text-white hover:bg-slate-900/50'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-blue-450'
+                    : 'text-slate-400 border-transparent hover:text-white hover:bg-slate-900/50'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export default function Dashboard() {
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 rounded-lg bg-slate-950 border border-slate-900 text-slate-350 hover:text-white md:hidden"
+              className="p-2 rounded-lg bg-slate-955 border border-slate-900 text-slate-350 hover:text-white md:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -236,7 +236,7 @@ export default function Dashboard() {
             {/* Mobile Logout */}
             <button
               onClick={handleLogout}
-              className="md:hidden p-2 rounded-lg bg-slate-950 border border-slate-900 text-red-400 hover:bg-red-500/5 transition-all"
+              className="md:hidden p-2 rounded-lg bg-slate-955 border border-slate-900 text-red-400 hover:bg-red-500/5 transition-all"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -294,7 +294,7 @@ export default function Dashboard() {
                 ></div>
                 
                 <div className="relative z-10 flex flex-col gap-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 border border-blue-500/20 text-blue-400 self-start">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start">
                     System Telemetry Online
                   </span>
                   <h2 className="font-display text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-350">
@@ -320,8 +320,9 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              {/* Summary Metric Cards - Equal height, grid gap, optimized paddings (p-5 pb-6) to fix clipped text descenders */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-stretch w-full">
+              {/* Summary Metric Cards - Changed to a spacious 3-column grid (lg:grid-cols-3) to double card horizontal space! */}
+              {/* Uses rounded-[24px], p-8 (32px padding), and min-h-[180px] to make boxes larger with beautiful breathing room around borders */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full animate-fadeIn">
                 {[
                   { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
                   { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
@@ -332,13 +333,13 @@ export default function Dashboard() {
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-5 pb-6 rounded-[20px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:border-blue-500/25 transition-all duration-300 shadow-md flex flex-col justify-between items-stretch animate-slide-up-fade"
+                    className="p-8 rounded-[24px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_25px_50px_rgba(0,0,0,0.5)] hover:border-blue-500/25 transition-all duration-300 shadow-md flex flex-col justify-between min-h-[180px] animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
-                    <div className="absolute -inset-px bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[20px] pointer-events-none" />
-                    <div className="relative z-10 flex flex-col gap-4 h-full">
+                    <div className="absolute -inset-px bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[24px] pointer-events-none" />
+                    <div className="relative z-10 flex flex-col justify-between h-full gap-5">
                       <div className="flex justify-between items-start">
-                        <div className={`p-2.5 rounded-xl border ${stat.color} transition-all duration-300 group-hover:scale-105 shadow-xs`}>
+                        <div className={`p-3 rounded-xl border ${stat.color} transition-all duration-300 group-hover:scale-105 shadow-sm`}>
                           <stat.icon className="w-5 h-5" />
                         </div>
                         <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
@@ -350,11 +351,11 @@ export default function Dashboard() {
                           {stat.trend}
                         </span>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-tight">{stat.title}</h3>
-                        <p className="text-2xl font-display font-extrabold text-white tracking-tight">{stat.value}</p>
+                      <div className="flex flex-col gap-1.5">
+                        <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 leading-tight">{stat.title}</h3>
+                        <p className="text-3xl font-display font-extrabold text-white tracking-tight leading-none">{stat.value}</p>
                       </div>
-                      <p className="text-[10px] text-slate-400 font-medium leading-normal">{stat.desc}</p>
+                      <p className="text-xs text-slate-400 font-medium leading-relaxed mt-1">{stat.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -556,7 +557,7 @@ export default function Dashboard() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 border-t border-white/5 pt-3">
+                    <div className="flex items-center justify-between text-[10px] text-slate-550 border-t border-white/5 pt-3">
                       <span>Refreshed: Just Now</span>
                       <span className="text-blue-400 cursor-pointer hover:underline">Re-center Map</span>
                     </div>
@@ -617,7 +618,7 @@ export default function Dashboard() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-[#0b0f19]/95 backdrop-blur-xl z-40 flex flex-col p-6 md:hidden animate-fadeIn">
           <div className="flex items-center justify-between border-b border-white/5 pb-5 mb-6">
-            <div className="bg-slate-950 px-4 py-3 rounded-xl border border-slate-900 shadow-sm">
+            <div className="bg-slate-955 px-4 py-3 rounded-xl border border-slate-900 shadow-sm">
               <Logo iconSize={22} textSize="text-base" />
             </div>
             <button
