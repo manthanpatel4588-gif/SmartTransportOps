@@ -7,8 +7,7 @@ import {
   MapPin,
   Navigation,
   Weight,
-  Trash2,
-  AlertCircle
+  Trash2
 } from 'lucide-react';
 
 export interface Trip {
@@ -90,33 +89,98 @@ export default function TripManagement() {
   const [plannedDistance, setPlannedDistance] = useState('');
   const [status, setStatus] = useState<'Draft' | 'Dispatched' | 'Completed' | 'Cancelled'>('Draft');
   
-  // Validation Error State
-  const [validationError, setValidationError] = useState('');
+  // Validation State
+  const [errors, setErrors] = useState<{
+    source?: string;
+    destination?: string;
+    vehicle?: string;
+    driver?: string;
+    cargoWeight?: string;
+    plannedDistance?: string;
+  }>({});
+
+  // Toast Notification State
+  interface Toast {
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'info';
+  }
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  };
 
   const handleDelete = (id: string) => {
     setTrips(trips.filter((t) => t.id !== id));
+    addToast(`Trip record ${id} has been deleted.`, 'info');
+  };
+
+  const handleFieldChange = (field: string, val: string) => {
+    if (field === 'source') setSource(val);
+    if (field === 'destination') setDestination(val);
+    if (field === 'vehicle') setVehicle(val);
+    if (field === 'driver') setDriver(val);
+    if (field === 'cargoWeight') setCargoWeight(val);
+    if (field === 'plannedDistance') setPlannedDistance(val);
+
+    // Validate real-time change
+    let errMsg = '';
+    const nameMap: Record<string, string> = {
+      source: 'Source Route',
+      destination: 'Destination',
+      vehicle: 'Assigned Vehicle',
+      driver: 'Assigned Driver',
+      cargoWeight: 'Cargo Weight',
+      plannedDistance: 'Planned Distance'
+    };
+    
+    if (!val.trim()) {
+      errMsg = `${nameMap[field]} is required.`;
+    } else if (field === 'cargoWeight' || field === 'plannedDistance') {
+      const num = parseFloat(val);
+      if (isNaN(num) || num <= 0) {
+        errMsg = `${nameMap[field]} must be a positive number.`;
+      }
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      [field]: errMsg
+    }));
   };
 
   const handleCreateTrip = (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationError('');
 
-    // Validations
-    if (!source || !destination || !vehicle || !driver || !cargoWeight || !plannedDistance) {
-      setValidationError('All fields are required.');
-      return;
-    }
+    // Perform final exhaustive check
+    const finalErrors: typeof errors = {};
+    if (!source.trim()) finalErrors.source = 'Source Route is required.';
+    if (!destination.trim()) finalErrors.destination = 'Destination is required.';
+    if (!vehicle.trim()) finalErrors.vehicle = 'Assigned Vehicle is required.';
+    if (!driver.trim()) finalErrors.driver = 'Assigned Driver is required.';
 
     const weightNum = parseFloat(cargoWeight);
-    const distanceNum = parseFloat(plannedDistance);
-
-    if (isNaN(weightNum) || weightNum <= 0) {
-      setValidationError('Cargo Weight must be a positive number.');
-      return;
+    if (!cargoWeight.trim()) {
+      finalErrors.cargoWeight = 'Cargo Weight is required.';
+    } else if (isNaN(weightNum) || weightNum <= 0) {
+      finalErrors.cargoWeight = 'Cargo Weight must be a positive number.';
     }
 
-    if (isNaN(distanceNum) || distanceNum <= 0) {
-      setValidationError('Planned Distance must be a positive number.');
+    const distanceNum = parseFloat(plannedDistance);
+    if (!plannedDistance.trim()) {
+      finalErrors.plannedDistance = 'Planned Distance is required.';
+    } else if (isNaN(distanceNum) || distanceNum <= 0) {
+      finalErrors.plannedDistance = 'Planned Distance must be a positive number.';
+    }
+
+    if (Object.values(finalErrors).some((err) => !!err)) {
+      setErrors(finalErrors);
+      addToast('Please correct validation errors in form fields.', 'error');
       return;
     }
 
@@ -140,6 +204,7 @@ export default function TripManagement() {
 
     setTrips([newTrip, ...trips]);
     setIsModalOpen(false);
+    addToast(`New Trip ${newId} successfully scheduled!`, 'success');
 
     // Reset Form fields
     setSource('');
@@ -149,7 +214,17 @@ export default function TripManagement() {
     setCargoWeight('');
     setPlannedDistance('');
     setStatus('Draft');
+    setErrors({});
   };
+
+  const isFormInvalid =
+    !source.trim() ||
+    !destination.trim() ||
+    !vehicle.trim() ||
+    !driver.trim() ||
+    !cargoWeight.trim() ||
+    !plannedDistance.trim() ||
+    Object.values(errors).some((err) => !!err);
 
   // Filtered trips list
   const filteredTrips = trips.filter((trip) => {
@@ -412,40 +487,47 @@ export default function TripManagement() {
 
             {/* Form */}
             <form onSubmit={handleCreateTrip} className="space-y-5">
-              {validationError && (
-                <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs animate-shake">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  <span>{validationError}</span>
-                </div>
-              )}
-
               {/* Source & Destination */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="modal-source" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Source Route
+                    Source Route <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-source"
                     type="text"
                     placeholder="e.g. Chicago Hub (ORD1)"
                     value={source}
-                    onChange={(e) => setSource(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('source', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.source ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.source ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.source && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.source}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="modal-destination" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Destination
+                    Destination <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-destination"
                     type="text"
                     placeholder="e.g. Houston Terminal (IAH2)"
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('destination', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.destination ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.destination ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.destination && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.destination}</p>
+                  )}
                 </div>
               </div>
 
@@ -453,29 +535,43 @@ export default function TripManagement() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="modal-vehicle" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Assigned Vehicle
+                    Assigned Vehicle <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-vehicle"
                     type="text"
                     placeholder="e.g. TRK-5524 (Scania R730)"
                     value={vehicle}
-                    onChange={(e) => setVehicle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('vehicle', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.vehicle ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.vehicle ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.vehicle && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.vehicle}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="modal-driver" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Assigned Driver
+                    Assigned Driver <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-driver"
                     type="text"
                     placeholder="e.g. Samuel Jackson"
                     value={driver}
-                    onChange={(e) => setDriver(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('driver', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.driver ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.driver ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.driver && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.driver}</p>
+                  )}
                 </div>
               </div>
 
@@ -483,29 +579,43 @@ export default function TripManagement() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label htmlFor="modal-weight" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Cargo Weight (kg)
+                    Cargo Weight (kg) <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-weight"
                     type="number"
                     placeholder="e.g. 21500"
                     value={cargoWeight}
-                    onChange={(e) => setCargoWeight(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('cargoWeight', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.cargoWeight ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.cargoWeight ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.cargoWeight && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.cargoWeight}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="modal-distance" className="block text-[10px] font-bold uppercase tracking-wider text-brand-navy-300">
-                    Planned Distance (km)
+                    Planned Distance (km) <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="modal-distance"
                     type="number"
                     placeholder="e.g. 850"
                     value={plannedDistance}
-                    onChange={(e) => setPlannedDistance(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-brand-navy-950 border border-brand-navy-850 text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:border-brand-blue-500 transition-all"
+                    onChange={(e) => handleFieldChange('plannedDistance', e.target.value)}
+                    className={`w-full px-3 py-2 rounded-xl bg-brand-navy-950 border ${
+                      errors.plannedDistance ? 'border-red-500 focus:border-red-500' : 'border-brand-navy-850 focus:border-brand-blue-500'
+                    } text-white placeholder-brand-navy-600 text-sm focus:outline-none focus:ring-1 ${
+                      errors.plannedDistance ? 'focus:ring-red-500/20' : 'focus:ring-brand-blue-500/20'
+                    } transition-all`}
                   />
+                  {errors.plannedDistance && (
+                    <p className="text-[10px] text-red-400 font-semibold">{errors.plannedDistance}</p>
+                  )}
                 </div>
               </div>
 
@@ -531,14 +641,18 @@ export default function TripManagement() {
               <div className="flex items-center justify-end gap-3 border-t border-brand-navy-850 pt-5 mt-6">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setErrors({});
+                  }}
                   className="px-4 py-2 rounded-xl text-xs font-semibold text-brand-navy-300 bg-brand-navy-850 border border-brand-navy-800 hover:text-white hover:border-brand-navy-700 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all shadow-md shadow-brand-blue-600/10"
+                  disabled={isFormInvalid}
+                  className="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all shadow-md shadow-brand-blue-600/10 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-brand-blue-600 disabled:hover:to-brand-blue-500"
                 >
                   Add Dispatch Route
                 </button>
@@ -547,6 +661,37 @@ export default function TripManagement() {
           </div>
         </div>
       )}
+
+      {/* Toast Notifications Container */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`pointer-events-auto flex items-center gap-3 p-4 rounded-xl border shadow-lg transition-all duration-300 transform translate-y-0 scale-100 ${
+              toast.type === 'success' ? 'bg-emerald-950/95 border-emerald-500/30 text-emerald-400' :
+              toast.type === 'error' ? 'bg-red-950/95 border-red-500/30 text-red-400' :
+              'bg-brand-navy-900/95 border-brand-navy-800 text-brand-blue-400'
+            }`}
+          >
+            {toast.type === 'success' && (
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            {toast.type === 'error' && (
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            {toast.type === 'info' && (
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+            <span className="text-xs font-semibold">{toast.message}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
