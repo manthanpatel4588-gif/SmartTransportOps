@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { DEFAULT_DRIVERS, DEFAULT_VEHICLES, DEFAULT_TRIPS } from './mockData';
+import { 
+  DEFAULT_DRIVERS, 
+  DEFAULT_VEHICLES, 
+  DEFAULT_TRIPS,
+  DEFAULT_FUEL_LOGS,
+  DEFAULT_MAINTENANCE_LOGS,
+  DEFAULT_EXPENSES
+} from './mockData';
 import { dispatchTrip, completeTrip, cancelTrip } from './dispatchWorkflow';
+import { getVehicleCostSummary } from './costCalculations';
 
 export default function App() {
   // --- Active Tab State ---
-  const [activeTab, setActiveTab] = useState('drivers'); // 'drivers', 'vehicles', 'trips'
+  const [activeTab, setActiveTab] = useState('drivers'); // 'drivers', 'vehicles', 'trips', 'expenses'
 
   // --- Core States (localStorage backed) ---
   const [drivers, setDrivers] = useState(() => {
@@ -20,6 +28,22 @@ export default function App() {
   const [trips, setTrips] = useState(() => {
     const saved = localStorage.getItem('smartops_trips');
     return saved ? JSON.parse(saved) : DEFAULT_TRIPS;
+  });
+
+  // Expense Log States
+  const [fuelLogs, setFuelLogs] = useState(() => {
+    const saved = localStorage.getItem('smartops_fuel_logs');
+    return saved ? JSON.parse(saved) : DEFAULT_FUEL_LOGS;
+  });
+
+  const [maintenanceLogs, setMaintenanceLogs] = useState(() => {
+    const saved = localStorage.getItem('smartops_maintenance_logs');
+    return saved ? JSON.parse(saved) : DEFAULT_MAINTENANCE_LOGS;
+  });
+
+  const [otherExpenses, setOtherExpenses] = useState(() => {
+    const saved = localStorage.getItem('smartops_expenses');
+    return saved ? JSON.parse(saved) : DEFAULT_EXPENSES;
   });
 
   // --- Search & Filters State ---
@@ -38,6 +62,9 @@ export default function App() {
 
   // Trip Modal
   const [isTripModalOpen, setIsTripModalOpen] = useState(false);
+
+  // Expense Modal
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
 
   // --- Form States ---
   // Driver Form
@@ -60,6 +87,23 @@ export default function App() {
   });
   const [tripFormErrors, setTripFormErrors] = useState({});
 
+  // Expense Form
+  const [expenseFormData, setExpenseFormData] = useState({
+    vehicleId: '',
+    expenseType: 'fuel', // 'fuel', 'maintenance', 'other'
+    date: '',
+    // Fuel parameters
+    fuelQuantity: '',
+    costPerLiter: '',
+    // Maintenance parameters
+    serviceType: '',
+    maintenanceCost: '',
+    // Other parameters
+    otherType: '',
+    otherAmount: ''
+  });
+  const [expenseFormErrors, setExpenseFormErrors] = useState({});
+
   // Toasts State
   const [toasts, setToasts] = useState([]);
 
@@ -75,6 +119,18 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('smartops_trips', JSON.stringify(trips));
   }, [trips]);
+
+  useEffect(() => {
+    localStorage.setItem('smartops_fuel_logs', JSON.stringify(fuelLogs));
+  }, [fuelLogs]);
+
+  useEffect(() => {
+    localStorage.setItem('smartops_maintenance_logs', JSON.stringify(maintenanceLogs));
+  }, [maintenanceLogs]);
+
+  useEffect(() => {
+    localStorage.setItem('smartops_expenses', JSON.stringify(otherExpenses));
+  }, [otherExpenses]);
 
   // Reset filter criteria when switching tabs
   useEffect(() => {
@@ -105,6 +161,21 @@ export default function App() {
 
     return { total, available, onTrip, safetyAvg };
   }, [drivers]);
+
+  // --- Dynamic Expense Metrics ---
+  const expenseMetrics = useMemo(() => {
+    const totalFuel = fuelLogs.reduce((sum, l) => sum + (Number(l.fuelQuantity) * Number(l.costPerLiter)), 0);
+    const totalMaintenance = maintenanceLogs.reduce((sum, l) => sum + Number(l.cost), 0);
+    const totalOther = otherExpenses.reduce((sum, l) => sum + Number(l.amount), 0);
+    const totalOperational = totalFuel + totalMaintenance + totalOther;
+
+    return {
+      totalFuel: Math.round(totalFuel * 100) / 100,
+      totalMaintenance: Math.round(totalMaintenance * 100) / 100,
+      totalOther: Math.round(totalOther * 100) / 100,
+      totalOperational: Math.round(totalOperational * 100) / 100
+    };
+  }, [fuelLogs, maintenanceLogs, otherExpenses]);
 
   // --- Query Filters & Sorting (Drivers) ---
   const filteredDrivers = useMemo(() => {
@@ -154,6 +225,11 @@ export default function App() {
       t.route.toLowerCase().includes(query)
     );
   }, [trips, searchQuery]);
+
+  // --- Vehicle Cost Summary ---
+  const vehicleCostSummary = useMemo(() => {
+    return getVehicleCostSummary(vehicles, fuelLogs, maintenanceLogs, otherExpenses);
+  }, [vehicles, fuelLogs, maintenanceLogs, otherExpenses]);
 
   // --- Utility Functions ---
   const getInitials = (name) => {
@@ -365,12 +441,106 @@ export default function App() {
       route: tripFormData.route.trim(),
       driverId: tripFormData.driverId,
       vehicleId: tripFormData.vehicleId,
-      status: 'Pending' // Initial state is Pending
+      status: 'Pending'
     };
 
     setTrips((prev) => [newTrip, ...prev]);
     triggerToast(`Trip route "${newTrip.route}" created. Status is set to Pending.`, 'success');
     closeTripModal();
+  };
+
+  // --- Expense Log Handlers ---
+  const openExpenseModal = () => {
+    setExpenseFormErrors({});
+    setExpenseFormData({
+      vehicleId: '',
+      expenseType: 'fuel',
+      date: '',
+      fuelQuantity: '',
+      costPerLiter: '',
+      serviceType: '',
+      maintenanceCost: '',
+      otherType: '',
+      otherAmount: ''
+    });
+    setIsExpenseModalOpen(true);
+  };
+
+  const closeExpenseModal = () => {
+    setIsExpenseModalOpen(false);
+  };
+
+  const handleExpenseInputChange = (e) => {
+    const { name, value } = e.target;
+    setExpenseFormData((prev) => ({ ...prev, [name]: value }));
+    if (expenseFormErrors[name]) {
+      setExpenseFormErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  const validateExpenseForm = () => {
+    const errors = {};
+    if (!expenseFormData.vehicleId) errors.vehicleId = 'Please select a vehicle.';
+    if (!expenseFormData.date) errors.date = 'Date of transaction is required.';
+
+    if (expenseFormData.expenseType === 'fuel') {
+      const qty = parseFloat(expenseFormData.fuelQuantity);
+      const price = parseFloat(expenseFormData.costPerLiter);
+      if (isNaN(qty) || qty <= 0) errors.fuelQuantity = 'Enter a valid fuel quantity (liters).';
+      if (isNaN(price) || price <= 0) errors.costPerLiter = 'Enter a valid cost per liter.';
+    } else if (expenseFormData.expenseType === 'maintenance') {
+      const cost = parseFloat(expenseFormData.maintenanceCost);
+      if (!expenseFormData.serviceType.trim()) errors.serviceType = 'Specify service event description.';
+      if (isNaN(cost) || cost <= 0) errors.maintenanceCost = 'Enter a valid maintenance cost.';
+    } else if (expenseFormData.expenseType === 'other') {
+      const amt = parseFloat(expenseFormData.otherAmount);
+      if (!expenseFormData.otherType.trim()) errors.otherType = 'Specify expense type description.';
+      if (isNaN(amt) || amt <= 0) errors.otherAmount = 'Enter a valid expense amount.';
+    }
+
+    setExpenseFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleExpenseSubmit = (e) => {
+    e.preventDefault();
+    if (!validateExpenseForm()) return;
+
+    const vName = vehicles.find(v => v.id === expenseFormData.vehicleId)?.name || 'Vehicle';
+
+    if (expenseFormData.expenseType === 'fuel') {
+      const log = {
+        id: `fl_${Date.now()}`,
+        vehicleId: expenseFormData.vehicleId,
+        fuelQuantity: parseFloat(expenseFormData.fuelQuantity),
+        costPerLiter: parseFloat(expenseFormData.costPerLiter),
+        date: expenseFormData.date
+      };
+      setFuelLogs((prev) => [log, ...prev]);
+      triggerToast(`Fuel transaction logged for "${vName}".`, 'success');
+    } else if (expenseFormData.expenseType === 'maintenance') {
+      const log = {
+        id: `ml_${Date.now()}`,
+        vehicleId: expenseFormData.vehicleId,
+        serviceType: expenseFormData.serviceType.trim(),
+        cost: parseFloat(expenseFormData.maintenanceCost),
+        date: expenseFormData.date
+      };
+      setMaintenanceLogs((prev) => [log, ...prev]);
+      triggerToast(`Maintenance record logged for "${vName}".`, 'success');
+    } else if (expenseFormData.expenseType === 'other') {
+      const log = {
+        id: `ex_${Date.now()}`,
+        vehicleId: expenseFormData.vehicleId,
+        expenseType: expenseFormData.otherType.trim(),
+        amount: parseFloat(expenseFormData.otherAmount),
+        date: expenseFormData.date
+      };
+      setOtherExpenses((prev) => [log, ...prev]);
+      triggerToast(`Miscellaneous expense logged for "${vName}".`, 'success');
+    }
+
+    closeExpenseModal();
   };
 
   // Get dynamic listings for selection dropdowns
@@ -390,6 +560,12 @@ export default function App() {
         title: 'Trip Dispatch Control',
         subtitle: 'Create route assignments, dispatch drivers, and manage active deliveries.',
         buttonText: 'Create Trip'
+      };
+    } else if (activeTab === 'expenses') {
+      return {
+        title: 'Operational Cost Analytics',
+        subtitle: 'Review total operational costs, fuel bills, and maintenance costs breakdown by vehicle.',
+        buttonText: 'Log Expense'
       };
     }
     return {
@@ -438,9 +614,19 @@ export default function App() {
             </span>
             Trips
           </button>
+          <button 
+            className={`menu-item ${activeTab === 'expenses' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('expenses')}
+            style={{ width: '100%', border: 'none', background: 'none', textAlign: 'left', cursor: 'pointer' }}
+          >
+            <span className="menu-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            Expenses
+          </button>
         </nav>
         <div className="sidebar-footer">
-          <span className="version-text">v1.4.0 (Workflow Enabled)</span>
+          <span className="version-text">v1.5.0 (Expense Tracking)</span>
         </div>
       </aside>
 
@@ -456,7 +642,11 @@ export default function App() {
             <div className="header-actions">
               <button 
                 className="btn btn-primary" 
-                onClick={activeTab === 'trips' ? openTripModal : () => openModal()}
+                onClick={
+                  activeTab === 'trips' ? openTripModal : 
+                  activeTab === 'expenses' ? openExpenseModal : 
+                  () => openModal()
+                }
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 {tabDetails.buttonText}
@@ -465,60 +655,108 @@ export default function App() {
           )}
         </header>
 
-        {/* Metrics Cards Panel (Visible across all tabs for consistent summary) */}
-        <section className="metrics-grid" id="metrics-panel" aria-label="Key Performance Indicators">
-          {/* Card 1: Total */}
-          <div className="metric-card bg-glow-blue">
-            <div className="card-glow"></div>
-            <div className="metric-header">
-              <span className="metric-label">Total Operators</span>
-              <div className="metric-icon-wrapper text-blue">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        {/* Dynamic Metrics Cards Panel */}
+        {activeTab !== 'expenses' ? (
+          <section className="metrics-grid" id="metrics-panel" aria-label="Key Performance Indicators">
+            <div className="metric-card bg-glow-blue">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Total Operators</span>
+                <div className="metric-icon-wrapper text-blue">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
               </div>
+              <div className="metric-value">{metrics.total}</div>
+              <div className="metric-trend text-muted">Registered in database</div>
             </div>
-            <div className="metric-value">{metrics.total}</div>
-            <div className="metric-trend text-muted">Registered in database</div>
-          </div>
 
-          {/* Card 2: Available */}
-          <div className="metric-card bg-glow-green">
-            <div className="card-glow"></div>
-            <div className="metric-header">
-              <span className="metric-label">Active & Available</span>
-              <div className="metric-icon-wrapper text-green">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <div className="metric-card bg-glow-green">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Active & Available</span>
+                <div className="metric-icon-wrapper text-green">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
               </div>
+              <div className="metric-value">{metrics.available}</div>
+              <div className="metric-trend text-green">Ready for assignment</div>
             </div>
-            <div className="metric-value">{metrics.available}</div>
-            <div className="metric-trend text-green">Ready for assignment</div>
-          </div>
 
-          {/* Card 3: On Trip */}
-          <div className="metric-card bg-glow-yellow">
-            <div className="card-glow"></div>
-            <div className="metric-header">
-              <span className="metric-label">On Trip</span>
-              <div className="metric-icon-wrapper text-yellow">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+            <div className="metric-card bg-glow-yellow">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">On Trip</span>
+                <div className="metric-icon-wrapper text-yellow">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg>
+                </div>
               </div>
+              <div className="metric-value">{metrics.onTrip}</div>
+              <div className="metric-trend text-yellow">Currently on transit routes</div>
             </div>
-            <div className="metric-value">{metrics.onTrip}</div>
-            <div className="metric-trend text-yellow">Currently on transit routes</div>
-          </div>
 
-          {/* Card 4: Avg Safety Score */}
-          <div className="metric-card bg-glow-purple">
-            <div className="card-glow"></div>
-            <div className="metric-header">
-              <span className="metric-label">Avg Safety Score</span>
-              <div className="metric-icon-wrapper text-purple">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <div className="metric-card bg-glow-purple">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Avg Safety Score</span>
+                <div className="metric-icon-wrapper text-purple">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
               </div>
+              <div className="metric-value">{metrics.safetyAvg}%</div>
+              <div className="metric-trend text-purple">Target: &gt;90% fleet standard</div>
             </div>
-            <div className="metric-value">{metrics.safetyAvg}%</div>
-            <div className="metric-trend text-purple">Target: &gt;90% fleet standard</div>
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="metrics-grid" id="expense-metrics-panel" aria-label="Operational Cost Indicators">
+            <div className="metric-card bg-glow-blue">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Total Fleet Cost</span>
+                <div className="metric-icon-wrapper text-blue">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+              </div>
+              <div className="metric-value">${expenseMetrics.totalOperational}</div>
+              <div className="metric-trend text-muted">Total operational spend</div>
+            </div>
+
+            <div className="metric-card bg-glow-green">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Fuel Spent</span>
+                <div className="metric-icon-wrapper text-green">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+              </div>
+              <div className="metric-value">${expenseMetrics.totalFuel}</div>
+              <div className="metric-trend text-green">Total fuel logs cost</div>
+            </div>
+
+            <div className="metric-card bg-glow-yellow">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Maintenance Spent</span>
+                <div className="metric-icon-wrapper text-yellow">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                </div>
+              </div>
+              <div className="metric-value">${expenseMetrics.totalMaintenance}</div>
+              <div className="metric-trend text-yellow">Total service tickets cost</div>
+            </div>
+
+            <div className="metric-card bg-glow-purple">
+              <div className="card-glow"></div>
+              <div className="metric-header">
+                <span className="metric-label">Other Expenses</span>
+                <div className="metric-icon-wrapper text-purple">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                </div>
+              </div>
+              <div className="metric-value">${expenseMetrics.totalOther}</div>
+              <div className="metric-trend text-purple">Tolls, insurance & permits</div>
+            </div>
+          </section>
+        )}
 
         {/* Dynamic Panel Content switcher */}
         {activeTab === 'drivers' && (
@@ -892,6 +1130,119 @@ export default function App() {
             </section>
           </>
         )}
+
+        {activeTab === 'expenses' && (
+          <>
+            {/* Summary Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '18px' }}>Vehicle-wise Cost Breakdown</h3>
+            </div>
+
+            {/* Vehicle Summary Table */}
+            <section className="table-container" style={{ marginBottom: '40px' }}>
+              <table className="driver-table">
+                <thead>
+                  <tr>
+                    <th>Vehicle Model</th>
+                    <th>Plate Number</th>
+                    <th>Fuel Cost</th>
+                    <th>Maintenance Cost</th>
+                    <th>Other Expenses</th>
+                    <th className="text-right">Total Operational Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vehicleCostSummary.map((sum) => (
+                    <tr key={sum.vehicleId}>
+                      <td className="driver-details-cell" data-label="Vehicle Model">
+                        <div className="driver-avatar" style={{ background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)', color: 'var(--color-primary)', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+                          🚚
+                        </div>
+                        <div className="driver-name">{sum.vehicleName}</div>
+                      </td>
+                      <td data-label="Plate Number">
+                        <span className="license-category-badge" style={{ textTransform: 'uppercase' }}>{sum.plateNumber}</span>
+                      </td>
+                      <td data-label="Fuel Cost">
+                        <span style={{ fontWeight: '500' }}>${sum.fuelCost}</span>
+                      </td>
+                      <td data-label="Maintenance Cost">
+                        <span style={{ fontWeight: '500' }}>${sum.maintenanceCost}</span>
+                      </td>
+                      <td data-label="Other Expenses">
+                        <span style={{ fontWeight: '500' }}>${sum.otherExpensesCost}</span>
+                      </td>
+                      <td className="text-right" data-label="Total Cost">
+                        <span style={{ fontWeight: '700', color: 'var(--color-primary)', fontSize: '15px' }}>${sum.totalCost}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+
+            {/* Combined Expense Ledger */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '18px' }}>Expenses Logs Ledger</h3>
+            </div>
+            
+            <section className="table-container">
+              <table className="driver-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Vehicle</th>
+                    <th>Expense Type</th>
+                    <th>Description</th>
+                    <th className="text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Map Fuel Logs */}
+                  {fuelLogs.map((log) => {
+                    const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
+                    const amount = Math.round((log.fuelQuantity * log.costPerLiter) * 100) / 100;
+                    return (
+                      <tr key={log.id}>
+                        <td data-label="Date">{formatDate(log.date)}</td>
+                        <td data-label="Vehicle">{vName}</td>
+                        <td data-label="Expense Type"><span className="status-pill available" style={{ fontSize: '11px' }}>Fuel</span></td>
+                        <td data-label="Description">Filled {log.fuelQuantity} Liters @ ${log.costPerLiter}/L</td>
+                        <td className="text-right" data-label="Amount" style={{ fontWeight: '600', color: 'var(--color-success)' }}>${amount}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Map Maintenance Logs */}
+                  {maintenanceLogs.map((log) => {
+                    const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
+                    return (
+                      <tr key={log.id}>
+                        <td data-label="Date">{formatDate(log.date)}</td>
+                        <td data-label="Vehicle">{vName}</td>
+                        <td data-label="Expense Type"><span className="status-pill suspended" style={{ fontSize: '11px' }}>Maintenance</span></td>
+                        <td data-label="Description">{log.serviceType}</td>
+                        <td className="text-right" data-label="Amount" style={{ fontWeight: '600', color: 'var(--color-danger)' }}>${log.cost}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Map Other Expenses */}
+                  {otherExpenses.map((log) => {
+                    const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
+                    return (
+                      <tr key={log.id}>
+                        <td data-label="Date">{formatDate(log.date)}</td>
+                        <td data-label="Vehicle">{vName}</td>
+                        <td data-label="Expense Type"><span className="status-pill offduty" style={{ fontSize: '11px' }}>Other</span></td>
+                        <td data-label="Description">{log.expenseType}</td>
+                        <td className="text-right" data-label="Amount" style={{ fontWeight: '600', color: 'var(--color-info)' }}>${log.amount}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </section>
+          </>
+        )}
       </main>
 
       {/* Modal Form (Add & Edit Driver) */}
@@ -1121,6 +1472,178 @@ export default function App() {
         </div>
       )}
 
+      {/* Log Expense Modal */}
+      {isExpenseModalOpen && (
+        <div className="modal-backdrop" id="expense-modal" role="dialog" aria-modal="true" aria-labelledby="expense-modal-title">
+          <div className="modal-card">
+            <header className="modal-header">
+              <h2 className="modal-title" id="expense-modal-title">Log Fleet Expense</h2>
+              <button className="modal-close" onClick={closeExpenseModal} aria-label="Close modal">✕</button>
+            </header>
+            <form id="expense-form" onSubmit={handleExpenseSubmit} noValidate>
+              <div className="form-grid">
+                {/* Vehicle Target Selector */}
+                <div className={`form-group ${expenseFormErrors.vehicleId ? 'invalid' : ''}`}>
+                  <label htmlFor="select-expense-vehicle" className="required">Vehicle Target</label>
+                  <div className="select-wrapper">
+                    <select
+                      id="select-expense-vehicle"
+                      name="vehicleId"
+                      value={expenseFormData.vehicleId}
+                      onChange={handleExpenseInputChange}
+                      required
+                    >
+                      <option value="" disabled hidden>Select vehicle</option>
+                      {vehicles.map(v => (
+                        <option key={v.id} value={v.id}>
+                          {v.name} ({v.plateNumber})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {expenseFormErrors.vehicleId && <span className="error-message">{expenseFormErrors.vehicleId}</span>}
+                </div>
+
+                {/* Expense Type Categorizer */}
+                <div className="form-group">
+                  <label htmlFor="select-expense-type" className="required">Expense Category</label>
+                  <div className="select-wrapper">
+                    <select
+                      id="select-expense-type"
+                      name="expenseType"
+                      value={expenseFormData.expenseType}
+                      onChange={handleExpenseInputChange}
+                      required
+                    >
+                      <option value="fuel">Fuel Logs</option>
+                      <option value="maintenance">Maintenance Service</option>
+                      <option value="other">Other Expenses (Tolls, Permits, etc.)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Transaction Date */}
+                <div className={`form-group col-span-2 ${expenseFormErrors.date ? 'invalid' : ''}`}>
+                  <label htmlFor="input-expense-date" className="required">Transaction Date</label>
+                  <input
+                    type="date"
+                    id="input-expense-date"
+                    name="date"
+                    value={expenseFormData.date}
+                    onChange={handleExpenseInputChange}
+                    required
+                  />
+                  {expenseFormErrors.date && <span className="error-message">{expenseFormErrors.date}</span>}
+                </div>
+
+                {/* Conditional Fields based on Category */}
+                {expenseFormData.expenseType === 'fuel' && (
+                  <>
+                    <div className={`form-group ${expenseFormErrors.fuelQuantity ? 'invalid' : ''}`}>
+                      <label htmlFor="input-fuel-quantity" className="required">Fuel Quantity (Liters)</label>
+                      <input
+                        type="number"
+                        id="input-fuel-quantity"
+                        name="fuelQuantity"
+                        placeholder="120"
+                        step="0.01"
+                        value={expenseFormData.fuelQuantity}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.fuelQuantity && <span className="error-message">{expenseFormErrors.fuelQuantity}</span>}
+                    </div>
+                    <div className={`form-group ${expenseFormErrors.costPerLiter ? 'invalid' : ''}`}>
+                      <label htmlFor="input-cost-liter" className="required">Cost per Liter ($)</label>
+                      <input
+                        type="number"
+                        id="input-cost-liter"
+                        name="costPerLiter"
+                        placeholder="1.25"
+                        step="0.01"
+                        value={expenseFormData.costPerLiter}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.costPerLiter && <span className="error-message">{expenseFormErrors.costPerLiter}</span>}
+                    </div>
+                  </>
+                )}
+
+                {expenseFormData.expenseType === 'maintenance' && (
+                  <>
+                    <div className={`form-group ${expenseFormErrors.serviceType ? 'invalid' : ''}`}>
+                      <label htmlFor="input-service-type" className="required">Service Activity</label>
+                      <input
+                        type="text"
+                        id="input-service-type"
+                        name="serviceType"
+                        placeholder="e.g. Engine Oil Change"
+                        value={expenseFormData.serviceType}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.serviceType && <span className="error-message">{expenseFormErrors.serviceType}</span>}
+                    </div>
+                    <div className={`form-group ${expenseFormErrors.maintenanceCost ? 'invalid' : ''}`}>
+                      <label htmlFor="input-maint-cost" className="required">Cost ($)</label>
+                      <input
+                        type="number"
+                        id="input-maint-cost"
+                        name="maintenanceCost"
+                        placeholder="350"
+                        step="0.01"
+                        value={expenseFormData.maintenanceCost}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.maintenanceCost && <span className="error-message">{expenseFormErrors.maintenanceCost}</span>}
+                    </div>
+                  </>
+                )}
+
+                {expenseFormData.expenseType === 'other' && (
+                  <>
+                    <div className={`form-group ${expenseFormErrors.otherType ? 'invalid' : ''}`}>
+                      <label htmlFor="input-other-type" className="required">Expense Description</label>
+                      <input
+                        type="text"
+                        id="input-other-type"
+                        name="otherType"
+                        placeholder="e.g. Highway Toll Charges"
+                        value={expenseFormData.otherType}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.otherType && <span className="error-message">{expenseFormErrors.otherType}</span>}
+                    </div>
+                    <div className={`form-group ${expenseFormErrors.otherAmount ? 'invalid' : ''}`}>
+                      <label htmlFor="input-other-amt" className="required">Amount ($)</label>
+                      <input
+                        type="number"
+                        id="input-other-amt"
+                        name="otherAmount"
+                        placeholder="75"
+                        step="0.01"
+                        value={expenseFormData.otherAmount}
+                        onChange={handleExpenseInputChange}
+                        required
+                      />
+                      {expenseFormErrors.otherAmount && <span className="error-message">{expenseFormErrors.otherAmount}</span>}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <footer className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeExpenseModal}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Log</button>
+              </footer>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Confirm Delete Driver Modal */}
       {isDeleteModalOpen && (
         <div className="modal-backdrop" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
@@ -1153,7 +1676,14 @@ export default function App() {
   );
 }
 
-// --- Eligibility Helper ---
+// Helper: Formats Dates nicely
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+// Helper: Evaluates assignment eligibility
 export function getEligibleDrivers(driversList) {
   const refDate = new Date('2026-07-12');
   return driversList.filter((driver) => {

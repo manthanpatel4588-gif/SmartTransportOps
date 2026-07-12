@@ -73,3 +73,26 @@ export const DEFAULT_TRIPS = [
     { id: "tr_2", route: "Houston to Dallas", driverId: "drv_1", vehicleId: "vh_1", status: "Pending" }
 ];
 
+export const DEFAULT_FUEL_LOGS = [
+    { id: "fl_1", vehicleId: "vh_1", fuelQuantity: 150, costPerLiter: 1.20, date: "2026-07-01" },
+    { id: "fl_2", vehicleId: "vh_2", fuelQuantity: 200, costPerLiter: 1.15, date: "2026-07-03" },
+    { id: "fl_3", vehicleId: "vh_1", fuelQuantity: 180, costPerLiter: 1.22, date: "2026-07-06" },
+    { id: "fl_4", vehicleId: "vh_3", fuelQuantity: 220, costPerLiter: 1.20, date: "2026-07-08" },
+    { id: "fl_5", vehicleId: "vh_4", fuelQuantity: 90, costPerLiter: 1.25, date: "2026-07-10" }
+];
+
+export const DEFAULT_MAINTENANCE_LOGS = [
+    { id: "ml_1", vehicleId: "vh_1", serviceType: "Oil & Filter Change", cost: 250, date: "2026-06-25" },
+    { id: "ml_2", vehicleId: "vh_2", serviceType: "Brake Pad Replacement", cost: 450, date: "2026-06-28" },
+    { id: "ml_3", vehicleId: "vh_3", serviceType: "Tire Rotation & Balance", cost: 180, date: "2026-07-02" },
+    { id: "ml_4", vehicleId: "vh_4", serviceType: "Headlight Fuse Assembly", cost: 85, date: "2026-07-05" }
+];
+
+export const DEFAULT_EXPENSES = [
+    { id: "ex_1", vehicleId: "vh_1", expenseType: "Highway Toll Charges", amount: 120, date: "2026-07-02" },
+    { id: "ex_2", vehicleId: "vh_2", expenseType: "Fleet Insurance Renewal", amount: 600, date: "2026-07-01" },
+    { id: "ex_3", vehicleId: "vh_3", expenseType: "State Transit Tolls", amount: 140, date: "2026-07-05" },
+    { id: "ex_4", vehicleId: "vh_4", expenseType: "Road Permit Fees", amount: 150, date: "2026-07-07" }
+];
+
+
