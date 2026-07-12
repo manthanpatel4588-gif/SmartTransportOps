@@ -18,6 +18,31 @@ window.getAvailableVehicles = function() {
     }
 };
 
+// Reusable global helper function to validate cargo weight against vehicle capacity
+window.validateCargoCapacity = function(vehicleCapacity, cargoWeight) {
+    const capacity = parseFloat(vehicleCapacity);
+    const weight = parseFloat(cargoWeight);
+
+    if (isNaN(capacity) || isNaN(weight)) {
+        return {
+            valid: false,
+            message: "Invalid capacity or weight value"
+        };
+    }
+
+    if (weight > capacity) {
+        return {
+            valid: false,
+            message: "Cargo exceeds vehicle capacity"
+        };
+    }
+
+    return {
+        valid: true,
+        message: ""
+    };
+};
+
 const DEFAULT_VEHICLES = [
     {
         id: "veh_1",
