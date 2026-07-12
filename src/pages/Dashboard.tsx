@@ -20,8 +20,23 @@ import {
   Droplet,
   Menu,
   X,
-  DollarSign
+  DollarSign,
+  List,
+  MapPin
 } from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend
+} from 'recharts';
+
 import Logo from '../components/Logo';
 import TripManagement from '../components/TripManagement';
 import MaintenanceManagement from '../components/MaintenanceManagement';
@@ -37,11 +52,29 @@ export default function Dashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const dispatches = [
-    { id: 'TRK-9801', driver: 'Marcus Vance', destination: 'Chicago Hub (ORD1)', status: 'In Transit', ETA: '14:45', progress: 65, alert: false },
-    { id: 'TRK-4421', driver: 'Elena Rostova', destination: 'Los Angeles Depot (LAX4)', status: 'Completed', ETA: 'Delivered', progress: 100, alert: false },
-    { id: 'TRK-1092', driver: 'Sarah Jenkins', destination: 'Houston Terminal (IAH2)', status: 'Delayed', ETA: '18:15', progress: 40, alert: true },
-    { id: 'TRK-8843', driver: 'Rajesh Patel', destination: 'New York Port (JFK8)', status: 'Out for Delivery', ETA: '11:30', progress: 90, alert: false },
-    { id: 'TRK-3021', driver: 'Carlos Gomez', destination: 'Miami Logistics (MIA3)', status: 'In Transit', ETA: '16:10', progress: 75, alert: false }
+    { id: 'TRK-9801', driver: 'Marcus Vance', destination: 'Chicago Hub (ORD1)', status: 'In Transit', ETA: '14:45' },
+    { id: 'TRK-4421', driver: 'Elena Rostova', destination: 'Los Angeles Depot (LAX4)', status: 'Completed', ETA: 'Delivered' },
+    { id: 'TRK-1092', driver: 'Sarah Connor', destination: 'Houston Terminal (IAH2)', status: 'In Transit', ETA: '18:15' },
+    { id: 'TRK-8843', driver: 'Rajesh Patel', destination: 'New York Port (JFK8)', status: 'Out for Delivery', ETA: '11:30' },
+    { id: 'TRK-3021', driver: 'Carlos Gomez', destination: 'Miami Logistics (MIA3)', status: 'In Transit', ETA: '16:10' }
+  ];
+
+  const utilizationData = [
+    { name: 'Mon', Utilization: 70 },
+    { name: 'Tue', Utilization: 80 },
+    { name: 'Wed', Utilization: 78 },
+    { name: 'Thu', Utilization: 82 },
+    { name: 'Fri', Utilization: 72 },
+    { name: 'Sat', Utilization: 80 },
+    { name: 'Sun', Utilization: 87.6 }
+  ];
+
+  const fleetCostData = [
+    { name: 'Volvo FH16', Fuel: 900, Maintenance: 1250 },
+    { name: 'Mack Anthem', Fuel: 1200, Maintenance: 850 },
+    { name: 'Peterbilt 579', Fuel: 760, Maintenance: 400 },
+    { name: 'Cascadia', Fuel: 1050, Maintenance: 1550 },
+    { name: 'Scania R730', Fuel: 840, Maintenance: 320 }
   ];
 
   const handleLogout = () => {
@@ -49,14 +82,14 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-brand-navy-950 text-white font-sans overflow-hidden">
-      {/* 1. Sidebar Navigation */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-brand-navy-800 bg-brand-navy-950/80 backdrop-blur-md p-6 justify-between flex-shrink-0 z-20">
+    <div className="flex h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden">
+      {/* 1. Left Sidebar - Fixed & Professional Navy Theme */}
+      <aside className="hidden md:flex flex-col w-64 border-r border-[#E5E7EB] bg-[#0F172A] p-6 justify-between flex-shrink-0 z-20">
         <div className="space-y-8">
           <Logo iconSize={26} textSize="text-lg" />
 
           {/* Nav links */}
-          <nav className="space-y-1.5">
+          <nav className="space-y-1">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -72,19 +105,19 @@ export default function Dashboard() {
               <button
                 key={item.name}
                 onClick={() => setActiveTab(item.name)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-150 ${
                   activeTab === item.name
-                    ? 'bg-brand-blue-600 text-white shadow-lg shadow-brand-blue-600/10'
-                    : 'text-slate-400 hover:text-white hover:bg-brand-navy-900'
+                    ? 'bg-[#2563EB] text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <item.icon className="w-5 h-5" />
+                  <item.icon className="w-4 h-4" />
                   <span>{item.name}</span>
                 </div>
                 {item.badge && (
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-brand-navy-800 text-brand-blue-400'
+                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {item.badge}
                   </span>
@@ -95,43 +128,41 @@ export default function Dashboard() {
         </div>
 
         {/* User Card & Logout */}
-        <div className="border-t border-brand-navy-900 pt-6 space-y-4">
+        <div className="border-t border-slate-800 pt-6 space-y-4">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue-600 to-brand-blue-400 flex items-center justify-center font-display font-bold text-white shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2563EB] to-blue-500 flex items-center justify-center font-display font-bold text-white shadow-xs">
               OP
             </div>
             <div>
               <p className="text-sm font-bold text-white">Operator #402</p>
-              <p className="text-xs text-brand-navy-400">Control Center 2</p>
+              <p className="text-xs text-slate-400">Control Center 2</p>
             </div>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-150"
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4" />
             <span>Operator Sign Out</span>
           </button>
         </div>
       </aside>
 
-      {/* 2. Main Dashboard Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-[#f8fafc] text-slate-800">
-        {/* Decorative background blobs */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
-
-        {/* Main Content Header */}
-        <header className="flex items-center justify-between px-6 md:px-8 py-5 border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+      {/* 2. Main content container */}
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-[#F5F7FA]">
+        
+        {/* Minimal Navbar */}
+        <header className="flex items-center justify-between px-6 md:px-8 py-4 border-b border-[#E5E7EB] bg-white sticky top-0 z-10 shadow-xs">
           <div className="flex items-center gap-4">
+            {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 md:hidden"
+              className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 md:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="font-display text-xl md:text-2xl font-extrabold tracking-tight text-slate-900">Operations Hub</h1>
-              <p className="text-xs text-slate-400 hidden sm:block">Real-time status updates and telemetry feeds</p>
+              <h1 className="font-display text-xl font-extrabold tracking-tight text-slate-900">{activeTab}</h1>
             </div>
           </div>
 
@@ -139,26 +170,26 @@ export default function Dashboard() {
           <div className="flex items-center gap-3">
             {/* Search Bar */}
             <div className="relative hidden lg:block">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search fleets, routes, drivers..."
-                className="w-64 pl-10 pr-4 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue-500 transition-colors"
+                className="w-60 pl-9 pr-4 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
               />
             </div>
 
             {/* Notification Bell */}
-            <button className="relative p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-350 hover:shadow-xs transition-all">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-blue-400"></span>
+            <button className="relative p-2 rounded-lg bg-white border border-slate-200 text-slate-500 hover:text-slate-800 transition-all">
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#2563EB]"></span>
             </button>
 
-            {/* Mobile Logout (visible on mobile only) */}
+            {/* Mobile Logout */}
             <button
               onClick={handleLogout}
-              className="md:hidden p-2.5 rounded-xl bg-white border border-slate-200 text-red-500 hover:bg-red-50 transition-all"
+              className="md:hidden p-2 rounded-lg bg-white border border-slate-200 text-red-500 hover:bg-red-50 transition-all"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </header>
@@ -178,16 +209,16 @@ export default function Dashboard() {
           ) : activeTab === 'Drivers' ? (
             <DriverManagement />
           ) : activeTab === 'Reports & Analytics' ? (
-            <div className="p-8 rounded-2xl bg-white border border-slate-200 text-center space-y-4 shadow-sm">
+            <div className="p-8 rounded-2xl bg-white border border-[#E5E7EB] text-center space-y-4 shadow-sm">
               <TrendingUp className="w-12 h-12 text-slate-400 mx-auto" />
               <h3 className="font-display font-bold text-lg text-slate-800">Operational Report Hub</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">Full visual fleet analytics, fuel efficiency quotients, and route optimization report metrics. To view consolidated charts, check the Overview tab dashboard.</p>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">Full visual fleet analytics, fuel efficiency quotients, and route optimization report metrics. To view consolidated charts, check the Overview tab dashboard.</p>
             </div>
           ) : activeTab === 'Notifications' ? (
-            <div className="p-8 rounded-2xl bg-white border border-slate-200 space-y-6 shadow-sm">
+            <div className="p-8 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <h3 className="font-display font-bold text-lg text-slate-800">Control Center Inbox</h3>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-blue-50 text-brand-blue-600 border border-brand-blue-100">12 Unread Alerts</span>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">12 Unread Alerts</span>
               </div>
               <div className="space-y-3.5">
                 {[
@@ -196,10 +227,10 @@ export default function Dashboard() {
                   { text: 'Vehicle TRK-9801 has completed dispatch leg: Chicago Hub.', type: 'success' },
                   { text: 'Maintenance Schedule Request: Volvo FH16 requires service interval.', type: 'info' }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/85 text-xs font-medium text-slate-700">
+                  <div key={idx} className="flex gap-3 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-700">
                     <span className={`w-2 h-2 rounded-full mt-1 ${
-                      item.type === 'warning' ? 'bg-amber-500' :
-                      item.type === 'success' ? 'bg-emerald-500' : 'bg-brand-blue-500'
+                      item.type === 'warning' ? 'bg-[#F59E0B]' :
+                      item.type === 'success' ? 'bg-[#22C55E]' : 'bg-[#2563EB]'
                     }`}></span>
                     <span>{item.text}</span>
                   </div>
@@ -210,13 +241,34 @@ export default function Dashboard() {
             <SystemSettings />
           ) : (
             <>
-              {/* Live Alert banner */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 shadow-sm">
+              {/* Hero Banner Section with subtle blurred background truck image */}
+              <div className="relative overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white p-6 md:p-8 shadow-xs">
+                {/* Truck background with 6% opacity & blur */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.06] filter blur-[1px]"
+                  style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
+                ></div>
+                {/* Soft gray overlay */}
+                <div className="absolute inset-0 bg-slate-900/[0.01]"></div>
+                
+                <div className="relative z-10 space-y-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+                    System Telemetry Online
+                  </span>
+                  <h2 className="font-display text-2xl font-extrabold text-[#0F172A]">Enterprise Logistics Console</h2>
+                  <p className="text-sm text-slate-500 max-w-2xl">
+                    Real-time logistical monitoring, operator dispatch workflows, and fleet maintenance telemetry dashboard. Orchestrate routes, inspect payloads, and log expenses seamlessly.
+                  </p>
+                </div>
+              </div>
+
+              {/* Weather Alert banner */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 shadow-xs">
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
                   <div>
                     <p className="text-sm font-bold text-slate-900">Weather Alert: Midwest Region (ORD1)</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
+                    <p className="text-xs text-slate-500 mt-0.5 font-medium">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
                 <button className="px-4 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold self-start sm:self-center transition-colors">
@@ -234,13 +286,13 @@ export default function Dashboard() {
                   { title: 'Drivers On Duty', value: '1,180', desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true },
                   { title: 'Fleet Utilization', value: '87.6%', desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true }
                 ].map((stat, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200 relative overflow-hidden group hover:border-brand-blue-500 hover:shadow-md transition-all duration-300">
+                  <div key={idx} className="p-5 rounded-2xl bg-white border border-[#E5E7EB] relative overflow-hidden group hover:border-[#2563EB] hover:shadow-md transition-all duration-200 shadow-xs">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 rounded-xl bg-slate-50 text-brand-blue-500 group-hover:bg-brand-blue-600 group-hover:text-white transition-colors duration-300">
+                      <div className="p-2 rounded-xl bg-slate-50 text-[#2563EB] group-hover:bg-[#2563EB] group-hover:text-white transition-colors duration-200">
                         <stat.icon className="w-5 h-5" />
                       </div>
                       <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                        stat.up ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+                        stat.up ? 'bg-emerald-50 text-[#22C55E]' : 'bg-red-50 text-[#EF4444]'
                       }`}>
                         {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
                         {stat.trend}
@@ -255,17 +307,18 @@ export default function Dashboard() {
 
               {/* Large Analytics Visualization & Recent Dispatches Section */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left/Middle Column (Feeds + Quick Actions) */}
+                
+                {/* Left Column (Feeds + Quick Actions + Analytics charts) */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Real-Time Dispatch Feeds */}
-                  <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-6 shadow-sm">
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h2 className="font-display text-lg font-bold text-slate-900">Real-Time Dispatch Feeds</h2>
-                        <p className="text-xs text-slate-400">Current tracking list for dispatch terminals</p>
+                        <p className="text-xs text-slate-450">Current tracking list for dispatch terminals</p>
                       </div>
                       <div className="flex gap-2">
-                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all">
+                        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all">
                           <Filter className="w-3.5 h-3.5" />
                           <span>Filter</span>
                         </button>
@@ -275,18 +328,18 @@ export default function Dashboard() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/40">
-                            <th className="pb-3 pr-4">Truck ID</th>
-                            <th className="pb-3 pr-4">Driver</th>
-                            <th className="pb-3 pr-4">Destination</th>
-                            <th className="pb-3 pr-4">Route Status</th>
-                            <th className="pb-3 pr-4">ETA</th>
+                          <tr className="border-b border-[#E5E7EB] text-xs font-bold uppercase tracking-wider text-slate-400 bg-slate-50/50">
+                            <th className="pb-3 pr-4 pt-2 pl-4">Truck ID</th>
+                            <th className="pb-3 pr-4 pt-2">Driver</th>
+                            <th className="pb-3 pr-4 pt-2">Destination</th>
+                            <th className="pb-3 pr-4 pt-2">Route Status</th>
+                            <th className="pb-3 pr-4 pt-2">ETA</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-sm">
                           {dispatches.map((dispatch) => (
                             <tr key={dispatch.id} className="group hover:bg-slate-50/50 transition-colors">
-                              <td className="py-3.5 font-mono font-bold text-brand-blue-600 hover:underline cursor-pointer pr-4">{dispatch.id}</td>
+                              <td className="py-3.5 font-mono font-bold text-[#2563EB] hover:underline cursor-pointer pr-4 pl-4">{dispatch.id}</td>
                               <td className="py-3.5 text-slate-800 font-semibold pr-4">
                                 <div className="flex items-center gap-2.5">
                                   <img
@@ -297,19 +350,14 @@ export default function Dashboard() {
                                   <span>{dispatch.driver}</span>
                                 </div>
                               </td>
-                              <td className="py-3.5 text-slate-600 pr-4">{dispatch.destination}</td>
+                              <td className="py-3.5 text-slate-500 pr-4">{dispatch.destination}</td>
                               <td className="py-3.5 pr-4">
                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                                  dispatch.status === 'Completed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                  dispatch.status === 'Delayed' ? 'bg-red-50 text-red-600 border border-red-100' :
-                                  dispatch.status === 'Out for Delivery' ? 'bg-cyan-50 text-cyan-600 border border-cyan-100' :
-                                  'bg-blue-50 text-blue-600 border border-blue-100'
+                                  dispatch.status === 'Completed' ? 'bg-emerald-50 text-[#22C55E] border border-emerald-100' :
+                                  'bg-blue-50 text-[#2563EB] border border-blue-100'
                                 }`}>
                                   <span className={`w-1.5 h-1.5 rounded-full ${
-                                    dispatch.status === 'Completed' ? 'bg-emerald-500' :
-                                    dispatch.status === 'Delayed' ? 'bg-red-500' :
-                                    dispatch.status === 'Out for Delivery' ? 'bg-cyan-500' :
-                                    'bg-blue-500'
+                                    dispatch.status === 'Completed' ? 'bg-[#22C55E]' : 'bg-[#2563EB]'
                                   }`}></span>
                                   {dispatch.status}
                                 </span>
@@ -322,8 +370,66 @@ export default function Dashboard() {
                     </div>
                   </div>
 
+                  {/* Recharts Analytics Section: Utilization Area Chart */}
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
+                    <div>
+                      <h2 className="font-display text-lg font-bold text-slate-900">Fleet Utilization Trend</h2>
+                      <p className="text-xs text-slate-450">Active utilization percentage levels tracked weekly</p>
+                    </div>
+
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                          data={utilizationData}
+                          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient id="utilGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#2563EB" stopOpacity={0.15}/>
+                              <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                          <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} domain={[0, 100]} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
+                          />
+                          <Area type="monotone" dataKey="Utilization" name="Utilization Rate (%)" stroke="#2563EB" strokeWidth={2.5} fillOpacity={1} fill="url(#utilGrad)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Recharts Analytics Section: Cost Bar Chart */}
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
+                    <div>
+                      <h2 className="font-display text-lg font-bold text-slate-900">Fleet Cost Breakdown</h2>
+                      <p className="text-xs text-slate-450">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
+                    </div>
+
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={fleetCostData}
+                          margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                          <XAxis dataKey="name" stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#94A3B8" fontSize={10} tickLine={false} axisLine={false} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '12px', fontSize: '11px', color: '#0F172A' }}
+                          />
+                          <Legend verticalAlign="top" height={36} iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '10px', color: '#64748B' }} />
+                          <Bar dataKey="Fuel" name="Fuel Expenses ($)" fill="#2563EB" radius={[4, 4, 0, 0]} />
+                          <Bar dataKey="Maintenance" name="Maintenance Cost ($)" fill="#0F172A" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
                   {/* Quick Actions Panel */}
-                  <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-sm">
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-4 shadow-xs">
                     <h3 className="font-display text-sm font-bold text-slate-800">Quick Actions</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                       {[
@@ -349,10 +455,10 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Right Column (Map + Utilization line chart) */}
+                {/* Right Column (Map + GPS Telemetry Logs) */}
                 <div className="space-y-6">
                   {/* Network Routing Map Card */}
-                  <div className="p-6 rounded-2xl bg-white border border-slate-200 flex flex-col h-[340px] shadow-sm">
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] flex flex-col h-[340px] shadow-xs">
                     <div>
                       <h2 className="font-display text-base font-bold text-slate-900">Network Routing Map</h2>
                       <p className="text-xs text-slate-400">Live visual feed of logistics grid</p>
@@ -362,7 +468,7 @@ export default function Dashboard() {
                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] opacity-20"></div>
                       
                       <svg className="w-full h-full absolute inset-0 opacity-40">
-                        <path d="M50 80 Q 150 120 220 70 T 320 180" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="4 4" />
+                        <path d="M50 80 Q 150 120 220 70 T 320 180" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4 4" />
                         <path d="M100 200 Q 200 110 300 120" fill="none" stroke="#f59e0b" strokeWidth="2" />
                       </svg>
 
@@ -394,87 +500,50 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Fleet Utilization Overview */}
-                  <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-4 shadow-sm">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-display text-sm font-bold text-slate-800">Fleet Utilization Overview</h3>
-                        <p className="text-[10px] text-slate-400">Live utilization trend for this week</p>
+                  {/* GPS Feed Logs (Terminal signal logs) */}
+                  <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-display text-base font-bold text-slate-900">GPS Terminal Feed</h3>
+                        <List className="w-4 h-4 text-slate-450" />
                       </div>
-                      <div className="relative">
-                        <select className="px-2.5 py-1 rounded-lg border border-slate-250 bg-white text-[10px] font-semibold text-slate-600 focus:outline-none">
-                          <option>This Week</option>
-                          <option>Last Week</option>
-                        </select>
-                      </div>
+                      <p className="text-xs text-slate-400">Live signal lock messages from operator network</p>
                     </div>
 
-                    {/* SVG Line Chart */}
-                    <div className="relative pt-4 flex justify-center items-center">
-                      <svg viewBox="0 0 500 220" className="w-full h-auto">
-                        <defs>
-                          <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
-                            <stop offset="100%" stopColor="#6366f1" stopOpacity="0.00" />
-                          </linearGradient>
-                        </defs>
+                    <div className="flex-1 my-4 overflow-y-auto space-y-3.5 pr-1 max-h-[300px]">
+                      {[
+                        { time: '12:03:45', vehicle: 'TRK-1092', action: 'Pinged coordinates near Chicago Hub (ORD1). Speed: 85 km/h.', status: 'success' },
+                        { time: '12:03:32', vehicle: 'TRK-4421', action: 'Cleared route checkpoint near Denver Corridor (DEN2).', status: 'info' },
+                        { time: '12:03:15', vehicle: 'TRK-9801', action: 'Brake diagnostic payload compiled. Status: Clean.', status: 'success' },
+                        { time: '12:02:50', vehicle: 'TRK-5524', action: 'Route deviation warning triggered near Houston Beltway.', status: 'warn' },
+                        { time: '12:02:10', vehicle: 'TRK-8843', action: 'Stopped at logistics base terminal Dallas North.', status: 'info' }
+                      ].map((log, idx) => (
+                        <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                          <div className="flex justify-between items-center text-[10px]">
+                            <span className="font-mono font-bold text-[#2563EB] flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {log.vehicle}
+                            </span>
+                            <span className="text-slate-450 font-semibold">{log.time}</span>
+                          </div>
+                          <p className="text-xs text-slate-600 leading-relaxed">{log.action}</p>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              log.status === 'success' ? 'bg-emerald-500' :
+                              log.status === 'warn' ? 'bg-amber-500' : 'bg-brand-blue-500'
+                            }`}></span>
+                            <span className="text-[9px] uppercase font-bold text-slate-400">{log.status}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
 
-                        {/* Grid lines */}
-                        <line x1="40" y1="30" x2="480" y2="30" stroke="#f1f5f9" strokeWidth="1.5" />
-                        <line x1="40" y1="72" x2="480" y2="72" stroke="#f1f5f9" strokeWidth="1.5" />
-                        <line x1="40" y1="114" x2="480" y2="114" stroke="#f1f5f9" strokeWidth="1.5" />
-                        <line x1="40" y1="156" x2="480" y2="156" stroke="#f1f5f9" strokeWidth="1.5" />
-                        <line x1="40" y1="198" x2="480" y2="198" stroke="#f1f5f9" strokeWidth="1.5" />
-
-                        {/* Y Axis Labels */}
-                        <text x="30" y="34" className="text-[10px] font-mono font-bold text-slate-400" textAnchor="end">100%</text>
-                        <text x="30" y="76" className="text-[10px] font-mono font-bold text-slate-400" textAnchor="end">75%</text>
-                        <text x="30" y="118" className="text-[10px] font-mono font-bold text-slate-400" textAnchor="end">50%</text>
-                        <text x="30" y="160" className="text-[10px] font-mono font-bold text-slate-400" textAnchor="end">25%</text>
-                        <text x="30" y="202" className="text-[10px] font-mono font-bold text-slate-400" textAnchor="end">0%</text>
-
-                        {/* Area gradient under line */}
-                        <path
-                          d="M 50 198 L 50 130 C 85 110, 85 100, 120 100 C 155 100, 155 115, 190 115 C 225 115, 225 100, 260 100 C 295 100, 295 125, 330 125 C 365 125, 365 110, 400 110 C 435 110, 435 60, 470 60 L 470 198 Z"
-                          fill="url(#chart-grad)"
-                        />
-
-                        {/* Smooth line */}
-                        <path
-                          d="M 50 130 C 85 110, 85 100, 120 100 C 155 100, 155 115, 190 115 C 225 115, 225 100, 260 100 C 295 100, 295 125, 330 125 C 365 125, 365 110, 400 110 C 435 110, 435 60, 470 60"
-                          fill="none"
-                          stroke="#6366f1"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                        />
-
-                        {/* Data points */}
-                        <circle cx="50" cy="130" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="120" cy="100" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="190" cy="115" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="260" cy="100" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="330" cy="125" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="400" cy="110" r="4" fill="#ffffff" stroke="#6366f1" strokeWidth="2.5" />
-                        <circle cx="470" cy="60" r="5" fill="#6366f1" stroke="#ffffff" strokeWidth="2" />
-
-                        {/* X Axis Labels */}
-                        <text x="50" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Mon</text>
-                        <text x="120" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Tue</text>
-                        <text x="190" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Wed</text>
-                        <text x="260" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Thu</text>
-                        <text x="330" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Fri</text>
-                        <text x="400" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Sat</text>
-                        <text x="470" y="216" className="text-[10px] font-semibold text-slate-400" textAnchor="middle">Sun</text>
-
-                        {/* Peak Value Badge on Sunday */}
-                        <g transform="translate(440, 15)">
-                          <rect width="42" height="18" rx="5" fill="#6366f1" />
-                          <text x="21" y="12" className="text-[9px] font-mono font-bold fill-white" textAnchor="middle">87.6%</text>
-                        </g>
-                      </svg>
+                    <div className="text-[10px] text-slate-400 text-center border-t border-slate-100 pt-4 mt-2">
+                      Auto-refresh active (interval: 5000ms)
                     </div>
                   </div>
                 </div>
+
               </div>
             </>
           )}
@@ -483,18 +552,18 @@ export default function Dashboard() {
 
       {/* Mobile Drawer Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-brand-navy-950/95 z-40 flex flex-col p-6 md:hidden animate-fadeIn">
-          <div className="flex items-center justify-between border-b border-brand-navy-900 pb-5 mb-6">
+        <div className="fixed inset-0 bg-[#0F172A]/95 z-45 flex flex-col p-6 md:hidden animate-fadeIn">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-5 mb-6">
             <Logo iconSize={26} textSize="text-lg" />
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-xl bg-brand-navy-900 border border-brand-navy-800 text-brand-navy-300 hover:text-white"
+              className="p-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
           
-          <nav className="flex-1 space-y-2 overflow-y-auto">
+          <nav className="flex-1 space-y-1 overflow-y-auto">
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
@@ -513,10 +582,10 @@ export default function Dashboard() {
                   setActiveTab(item.name);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
                   activeTab === item.name
-                    ? 'bg-brand-blue-600 text-white shadow-lg'
-                    : 'text-slate-400 hover:text-white hover:bg-brand-navy-900'
+                    ? 'bg-[#2563EB] text-white shadow-sm'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -525,7 +594,7 @@ export default function Dashboard() {
                 </div>
                 {item.badge && (
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-brand-navy-800 text-brand-blue-400'
+                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
                   }`}>
                     {item.badge}
                   </span>
@@ -534,10 +603,10 @@ export default function Dashboard() {
             ))}
           </nav>
 
-          <div className="border-t border-brand-navy-900 pt-6">
+          <div className="border-t border-slate-800 pt-6">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all"
             >
               <LogOut className="w-5 h-5" />
               <span>Operator Sign Out</span>

@@ -1115,8 +1115,8 @@ select option {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-brand-navy-950);
-  color: var(--color-brand-navy-100);
+  background-color: #F5F7FA;
+  color: #0F172A;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -1129,12 +1129,12 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-brand-navy-900);
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-brand-navy-700);
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-blue-600);
+  background: #94A3B8;
 }

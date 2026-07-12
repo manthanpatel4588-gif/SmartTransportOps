@@ -50,13 +50,13 @@ export default function LiveTracking() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="font-display text-2xl font-extrabold tracking-tight">Live Tracking</h2>
-          <p className="text-xs text-brand-navy-400">Real-time GPS coordinate telemetry overlay and routing logs</p>
+          <h2 className="font-display text-2xl font-extrabold tracking-tight text-slate-900">Live Tracking</h2>
+          <p className="text-xs text-slate-500">Real-time GPS coordinate telemetry overlay and routing logs</p>
         </div>
         <button
           onClick={handleManualPing}
           disabled={isPinging}
-          className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed self-start sm:self-center"
+          className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed self-start sm:self-center shadow-xs"
         >
           {isPinging ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -70,20 +70,20 @@ export default function LiveTracking() {
       {/* Analytics Telemetry Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { label: 'GPS Network Strength', value: '98.4%', desc: 'Carrier lock: Strong', icon: Radio, color: 'text-cyan-400' },
-          { label: 'Active Satellites', value: '14 Locked', desc: 'Optimal visual field', icon: Compass, color: 'text-brand-blue-400' },
-          { label: 'Uplink Latency', value: '24 ms', desc: 'API threshold: Good', icon: Clock, color: 'text-emerald-400' },
-          { label: 'Transponder CPU', value: '31.2%', desc: 'Cluster state: Stable', icon: Cpu, color: 'text-brand-navy-300' }
+          { label: 'GPS Network Strength', value: '98.4%', desc: 'Carrier lock: Strong', icon: Radio, color: 'text-blue-600 bg-blue-50' },
+          { label: 'Active Satellites', value: '14 Locked', desc: 'Optimal visual field', icon: Compass, color: 'text-indigo-600 bg-indigo-50' },
+          { label: 'Uplink Latency', value: '24 ms', desc: 'API threshold: Good', icon: Clock, color: 'text-emerald-600 bg-emerald-50' },
+          { label: 'Transponder CPU', value: '31.2%', desc: 'Cluster state: Stable', icon: Cpu, color: 'text-slate-700 bg-slate-100' }
         ].map((card, idx) => (
-          <div key={idx} className="p-5 rounded-2xl bg-brand-navy-900/60 border border-brand-navy-800 backdrop-blur-sm">
+          <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2 rounded-xl bg-brand-navy-850">
-                <card.icon className={`w-5 h-5 ${card.color}`} />
+              <div className={`p-2 rounded-xl ${card.color}`}>
+                <card.icon className="w-5 h-5" />
               </div>
             </div>
-            <h3 className="text-[10px] font-bold uppercase tracking-wider text-brand-navy-400 mb-1">{card.label}</h3>
-            <p className="text-2xl font-display font-extrabold text-white mb-1">{card.value}</p>
-            <p className="text-[10px] text-brand-navy-500">{card.desc}</p>
+            <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">{card.label}</h3>
+            <p className="text-2xl font-display font-extrabold text-slate-900 mb-1">{card.value}</p>
+            <p className="text-[10px] text-slate-500">{card.desc}</p>
           </div>
         ))}
       </div>
@@ -91,15 +91,15 @@ export default function LiveTracking() {
       {/* Grid Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Map telemetry */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-brand-navy-900/60 border border-brand-navy-800 backdrop-blur-sm flex flex-col justify-between min-h-[400px]">
+        <div className="lg:col-span-2 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between min-h-[400px]">
           <div>
-            <h3 className="font-display text-lg font-bold">Logistics Telemetry Map</h3>
-            <p className="text-xs text-brand-navy-400">Interactive live dispatch coordinate lock dashboard</p>
+            <h3 className="font-display text-lg font-bold text-slate-900">Logistics Telemetry Map</h3>
+            <p className="text-xs text-slate-500">Interactive live dispatch coordinate lock dashboard</p>
           </div>
 
-          <div className="relative flex-1 my-4 rounded-xl border border-brand-navy-800 bg-brand-navy-950 overflow-hidden flex items-center justify-center min-h-[300px]">
+          <div className="relative flex-1 my-4 rounded-xl border border-slate-200 bg-slate-900 overflow-hidden flex items-center justify-center min-h-[300px]">
             {/* Visual grid layout */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-35"></div>
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-20"></div>
 
             {/* Simulated routes */}
             <svg className="w-full h-full absolute inset-0 opacity-40">
@@ -122,12 +122,12 @@ export default function LiveTracking() {
             </span>
 
             {/* Interactive coordinates helper */}
-            <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl bg-brand-navy-900/90 border border-brand-navy-800 backdrop-blur-md flex items-center justify-between text-xs">
+            <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur-md flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <Navigation className="w-4 h-4 text-brand-blue-400 animate-pulse" />
-                <span className="font-semibold text-white">Tracking 1,248 Transponders</span>
+                <span className="font-semibold text-slate-350">Tracking 1,248 Transponders</span>
               </div>
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
+              <span className="text-emerald-405 font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                 LIVE OVERLAY ACTIVE
               </span>
@@ -136,38 +136,38 @@ export default function LiveTracking() {
         </div>
 
         {/* Right: GPS Feed Logs */}
-        <div className="p-6 rounded-2xl bg-brand-navy-900/60 border border-brand-navy-800 backdrop-blur-sm flex flex-col justify-between">
+        <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-display text-lg font-bold">GPS Terminal Feed</h3>
-              <List className="w-4 h-4 text-brand-navy-400" />
+              <h3 className="font-display text-lg font-bold text-slate-900">GPS Terminal Feed</h3>
+              <List className="w-4 h-4 text-slate-400" />
             </div>
-            <p className="text-xs text-brand-navy-400">Live signal lock messages from operator network</p>
+            <p className="text-xs text-slate-400">Live signal lock messages from operator network</p>
           </div>
 
           <div className="flex-1 my-4 overflow-y-auto space-y-3.5 pr-1 max-h-[300px]">
             {logs.map((log, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-brand-navy-950 border border-brand-navy-850 space-y-1.5">
+              <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                 <div className="flex justify-between items-center text-[10px]">
-                  <span className="font-mono font-bold text-brand-blue-400 flex items-center gap-1">
+                  <span className="font-mono font-bold text-brand-blue-600 flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
                     {log.vehicle}
                   </span>
-                  <span className="text-brand-navy-500 font-semibold">{log.time}</span>
+                  <span className="text-slate-450 font-semibold">{log.time}</span>
                 </div>
-                <p className="text-xs text-brand-navy-300 leading-relaxed">{log.action}</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{log.action}</p>
                 <div className="flex items-center gap-1.5">
                   <span className={`w-1.5 h-1.5 rounded-full ${
-                    log.status === 'success' ? 'bg-emerald-400' :
-                    log.status === 'warn' ? 'bg-amber-400' : 'bg-brand-blue-400'
+                    log.status === 'success' ? 'bg-emerald-500' :
+                    log.status === 'warn' ? 'bg-amber-500' : 'bg-brand-blue-500'
                   }`}></span>
-                  <span className="text-[9px] uppercase font-bold text-brand-navy-400">{log.status}</span>
+                  <span className="text-[9px] uppercase font-bold text-slate-400">{log.status}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="text-[10px] text-brand-navy-500 text-center border-t border-brand-navy-900 pt-4 mt-2">
+          <div className="text-[10px] text-slate-400 text-center border-t border-slate-100 pt-4 mt-2">
             Auto-refresh active (interval: 5000ms)
           </div>
         </div>

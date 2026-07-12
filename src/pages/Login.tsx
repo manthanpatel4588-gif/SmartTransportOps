@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function Login() {
@@ -33,191 +33,155 @@ export default function Login() {
     setTimeout(() => {
       setIsLoading(false);
       navigate('/dashboard');
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-brand-navy-950 text-white font-sans overflow-hidden">
-      {/* Background glowing blobs */}
-      <div className="absolute top-0 -left-40 w-96 h-96 bg-brand-blue-600/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-blue-500/5 rounded-full blur-3xl"></div>
+    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative">
+      {/* Background soft glowing elements */}
+      <div className="absolute top-0 -left-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl"></div>
 
-      {/* Left side: Premium Branding & Live Analytics (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-7/12 relative flex-col justify-between p-12 border-r border-brand-navy-800 bg-brand-navy-950/50 backdrop-blur-md">
-        {/* Subtle grid pattern background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20"></div>
+      {/* Main Container - Split Left/Right Layout (responsive) */}
+      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-lg overflow-hidden relative z-10 m-4">
+        
+        {/* Left Side: Professional SaaS Branding Showcase (hidden on mobile) */}
+        <div className="hidden md:flex md:w-1/2 bg-[#0F172A] p-12 flex-col justify-between relative overflow-hidden text-white">
+          {/* Subtle blurred truck image overlay in background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10 filter blur-[1px]"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
+          ></div>
+          <div className="absolute inset-0 bg-slate-900/40"></div>
 
-        <div className="relative z-10">
-          <Logo textSize="text-2xl" iconSize={36} />
-        </div>
-
-        {/* Dynamic Telemetry Showcase */}
-        <div className="relative z-10 my-auto max-w-xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-blue-500/10 border border-brand-blue-500/20 text-brand-blue-400 mb-6 animate-pulse">
-            <span className="w-2 h-2 rounded-full bg-brand-blue-400"></span>
-            Global Fleet Operations Active
-          </span>
-          <h1 className="font-display text-4xl xl:text-5xl font-extrabold leading-tight tracking-tight mb-4">
-            Next-Gen Fleet Management & Logistics Orchestration
-          </h1>
-          <p className="text-brand-navy-400 text-lg leading-relaxed mb-8">
-            Monitor, route, and optimize transport operations in real-time. Boost efficiency and minimize delays with AI-driven operations telemetry.
-          </p>
-
-          {/* Quick Metrics display */}
-          <div className="grid grid-cols-3 gap-6 pt-6 border-t border-brand-navy-800">
-            <div>
-              <p className="text-brand-blue-400 font-display text-2xl font-bold">1,842</p>
-              <p className="text-xs text-brand-navy-400 mt-1 uppercase tracking-wider">Active Fleets</p>
-            </div>
-            <div>
-              <p className="text-brand-blue-400 font-display text-2xl font-bold">99.4%</p>
-              <p className="text-xs text-brand-navy-400 mt-1 uppercase tracking-wider">On-Time Rate</p>
-            </div>
-            <div>
-              <p className="text-brand-blue-400 font-display text-2xl font-bold">&lt; 14m</p>
-              <p className="text-xs text-brand-navy-400 mt-1 uppercase tracking-wider">Dispatch Time</p>
-            </div>
+          <div className="relative z-10">
+            <Logo textSize="text-xl" iconSize={28} />
           </div>
-        </div>
 
-        {/* Live system state footer */}
-        <div className="relative z-10 flex items-center justify-between text-xs text-brand-navy-500 border-t border-brand-navy-900 pt-6">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            <span>Encrypted Connection Active (AES-256)</span>
-          </div>
-          <span>v2.4.1-stable</span>
-        </div>
-      </div>
-
-      {/* Right side: Login Form */}
-      <div className="w-full lg:w-5/12 flex flex-col justify-center items-center p-6 md:p-12 relative z-10">
-        {/* Mobile Header */}
-        <div className="lg:hidden w-full max-w-md mb-8 flex justify-center">
-          <Logo textSize="text-xl" iconSize={30} />
-        </div>
-
-        <div className="w-full max-w-md">
-          {/* Form Header */}
-          <div className="mb-8">
-            <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-white mb-2">
-              Operator Sign In
-            </h2>
-            <p className="text-brand-navy-400 text-sm">
-              Enter your credentials to access the logistics control center.
+          <div className="relative z-10 space-y-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 border border-blue-500/30 text-blue-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>
+              Global Fleet Control Active
+            </span>
+            <h1 className="font-display text-3xl font-extrabold leading-tight tracking-tight">
+              Enterprise Logistics & Operations Console
+            </h1>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Log, track, and optimize logistical dispatch operations in real-time. Control fleets, audit maintenance costs, and manage operators under a secure framework.
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-6">
+          <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80 pt-6">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>SSL Encryption Secured</span>
+            </div>
+            <span>v2.4.1</span>
+          </div>
+        </div>
+
+        {/* Right Side: Clean Login Form */}
+        <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-white">
+          <div className="w-full max-w-sm mx-auto space-y-6">
+            
+            {/* Header */}
+            <div>
+              <h2 className="font-display text-2xl font-extrabold text-slate-900 tracking-tight">Operator Sign In</h2>
+              <p className="text-xs text-slate-500 mt-1">Enter your credentials to access your control workstation.</p>
+            </div>
+
+            {/* Error alerts */}
             {error && (
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm animate-shake">
-                <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+              <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium animate-shake">
+                <ShieldAlert className="w-4 h-4 text-red-650 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-brand-navy-300">
-                Control Room Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-navy-500">
-                  <Mail className="w-5 h-5" />
+            {/* Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Control Room Email</label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-405 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="email"
+                    placeholder="operator@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                  />
                 </div>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-brand-navy-900 border border-brand-navy-800 text-white placeholder-brand-navy-600 focus:outline-none focus:border-brand-blue-500 focus:ring-1 focus:ring-brand-blue-500 transition-all duration-200"
-                />
               </div>
-            </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-xs font-semibold uppercase tracking-wider text-brand-navy-300">
-                  Operator Password
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Workstation Password</label>
+                  <a href="#" className="text-xs text-brand-blue-600 hover:underline">Forgot?</a>
+                </div>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-405 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-slate-300 text-brand-blue-600 focus:ring-blue-500/20"
+                />
+                <label htmlFor="remember" className="ml-2 text-xs text-slate-500 cursor-pointer select-none">
+                  Remember my workstation
                 </label>
-                <a href="#" className="text-xs text-brand-blue-400 hover:text-brand-blue-300 transition-colors">
-                  Forgot Password?
-                </a>
               </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-navy-500">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isLoading}
-                  className="w-full pl-11 pr-12 py-3 rounded-xl bg-brand-navy-900 border border-brand-navy-800 text-white placeholder-brand-navy-600 focus:outline-none focus:border-brand-blue-500 focus:ring-1 focus:ring-brand-blue-500 transition-all duration-200"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-brand-navy-500 hover:text-brand-navy-300 transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
 
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center">
-              <input
-                id="remember"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
+              {/* Submit Button */}
+              <button
+                type="submit"
                 disabled={isLoading}
-                className="h-4.5 w-4.5 rounded-md border-brand-navy-800 bg-brand-navy-900 text-brand-blue-500 focus:ring-brand-blue-500/20"
-              />
-              <label htmlFor="remember" className="ml-2 text-sm text-brand-navy-400 cursor-pointer select-none">
-                Remember my workstation
-              </label>
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-60"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Verifying Workstation...</span>
+                  </div>
+                ) : (
+                  <>
+                    <span>Sign In to Dashboard</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+              Need assistance?{' '}
+              <a href="#" className="font-semibold text-brand-blue-600 hover:underline">Contact System Admin</a>
             </div>
 
-            {/* Login Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full group flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-brand-blue-600/20 disabled:opacity-75 disabled:pointer-events-none"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Verifying Operator...</span>
-                </div>
-              ) : (
-                <>
-                  <span>Sign In to Dashboard</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Registration link placeholder */}
-          <div className="mt-8 text-center text-sm text-brand-navy-400">
-            Need workstation access?{' '}
-            <a href="#" className="font-semibold text-brand-blue-400 hover:text-brand-blue-300 transition-colors">
-              Contact Administrator
-            </a>
           </div>
         </div>
+
       </div>
     </div>
   );
