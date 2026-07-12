@@ -93,7 +93,7 @@ export default function Login() {
             {/* Error alerts */}
             {error && (
               <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium animate-shake">
-                <ShieldAlert className="w-4 h-4 text-red-650 flex-shrink-0" />
+                <ShieldAlert className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -103,14 +103,14 @@ export default function Login() {
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Control Room Email</label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-405 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     placeholder="operator@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
                   />
                 </div>
               </div>
@@ -121,14 +121,14 @@ export default function Login() {
                   <a href="#" className="text-xs text-brand-blue-600 hover:underline">Forgot?</a>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-405 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
                   />
                   <button
                     type="button"

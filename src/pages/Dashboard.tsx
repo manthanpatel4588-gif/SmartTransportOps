@@ -174,7 +174,7 @@ export default function Dashboard() {
               <input
                 type="text"
                 placeholder="Search fleets, routes, drivers..."
-                className="w-60 pl-9 pr-4 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
+                className="w-60 pl-10 pr-4 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
               />
             </div>
 
@@ -315,7 +315,7 @@ export default function Dashboard() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h2 className="font-display text-lg font-bold text-slate-900">Real-Time Dispatch Feeds</h2>
-                        <p className="text-xs text-slate-450">Current tracking list for dispatch terminals</p>
+                        <p className="text-xs text-slate-400">Current tracking list for dispatch terminals</p>
                       </div>
                       <div className="flex gap-2">
                         <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-xs text-slate-600 hover:text-slate-900 hover:border-slate-350 transition-all">
@@ -374,7 +374,7 @@ export default function Dashboard() {
                   <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900">Fleet Utilization Trend</h2>
-                      <p className="text-xs text-slate-450">Active utilization percentage levels tracked weekly</p>
+                      <p className="text-xs text-slate-400">Active utilization percentage levels tracked weekly</p>
                     </div>
 
                     <div className="h-64 w-full">
@@ -405,7 +405,7 @@ export default function Dashboard() {
                   <div className="p-6 rounded-2xl bg-white border border-[#E5E7EB] space-y-6 shadow-xs">
                     <div>
                       <h2 className="font-display text-lg font-bold text-slate-900">Fleet Cost Breakdown</h2>
-                      <p className="text-xs text-slate-450">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
+                      <p className="text-xs text-slate-400">Comparison of fuel expenses vs workshop maintenance costs per vehicle</p>
                     </div>
 
                     <div className="h-64 w-full">
@@ -481,7 +481,7 @@ export default function Dashboard() {
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-blue-500"></span>
                       </span>
                       <span className="absolute left-[300px] top-[120px] flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-450 opacity-75"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                       </span>
 
@@ -505,7 +505,7 @@ export default function Dashboard() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-display text-base font-bold text-slate-900">GPS Terminal Feed</h3>
-                        <List className="w-4 h-4 text-slate-450" />
+                        <List className="w-4 h-4 text-slate-400" />
                       </div>
                       <p className="text-xs text-slate-400">Live signal lock messages from operator network</p>
                     </div>
@@ -524,7 +524,7 @@ export default function Dashboard() {
                               <MapPin className="w-3 h-3" />
                               {log.vehicle}
                             </span>
-                            <span className="text-slate-450 font-semibold">{log.time}</span>
+                            <span className="text-slate-400 font-semibold">{log.time}</span>
                           </div>
                           <p className="text-xs text-slate-600 leading-relaxed">{log.action}</p>
                           <div className="flex items-center gap-1.5">

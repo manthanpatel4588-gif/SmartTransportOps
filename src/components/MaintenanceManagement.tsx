@@ -365,7 +365,7 @@ export default function MaintenanceManagement() {
                   </span>
                 </div>
 
-                <div className="space-y-1.5 border-y border-slate-100 py-3 text-xs text-slate-650">
+                <div className="space-y-1.5 border-y border-slate-100 py-3 text-xs text-slate-600">
                   <div>Vehicle: <strong>{r.vehicle}</strong></div>
                   <div>Type: <strong>{r.type}</strong></div>
                   <div className="text-[10px] text-slate-400 line-clamp-2 mt-0.5">{r.description}</div>
@@ -373,16 +373,16 @@ export default function MaintenanceManagement() {
 
                 <div className="flex justify-between items-center text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-450 block">Log Cost</span>
+                    <span className="text-[10px] text-slate-400 block">Log Cost</span>
                     <strong className="text-slate-800">${r.cost}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-slate-450 block">Start Date</span>
+                    <span className="text-[10px] text-slate-400 block">Start Date</span>
                     <strong className="text-slate-800">{r.startDate}</strong>
                   </div>
                   <button
                     onClick={() => handleDelete(r.id)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-650"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

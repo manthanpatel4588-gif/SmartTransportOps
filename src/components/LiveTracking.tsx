@@ -127,7 +127,7 @@ export default function LiveTracking() {
                 <Navigation className="w-4 h-4 text-brand-blue-400 animate-pulse" />
                 <span className="font-semibold text-slate-350">Tracking 1,248 Transponders</span>
               </div>
-              <span className="text-emerald-405 font-bold flex items-center gap-1">
+              <span className="text-emerald-500 font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                 LIVE OVERLAY ACTIVE
               </span>
@@ -153,7 +153,7 @@ export default function LiveTracking() {
                     <MapPin className="w-3 h-3" />
                     {log.vehicle}
                   </span>
-                  <span className="text-slate-450 font-semibold">{log.time}</span>
+                  <span className="text-slate-400 font-semibold">{log.time}</span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">{log.action}</p>
                 <div className="flex items-center gap-1.5">

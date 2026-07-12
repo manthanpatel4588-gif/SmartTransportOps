@@ -328,19 +328,19 @@ export default function FuelManagement() {
                   </span>
                 </div>
 
-                <div className="space-y-1.5 border-y border-slate-100 py-3 text-xs text-slate-650">
+                <div className="space-y-1.5 border-y border-slate-100 py-3 text-xs text-slate-600">
                   <div>Vehicle: <strong>{l.vehicle}</strong></div>
                   <div className="flex items-center gap-1">Quantity: <strong className="text-slate-800">{l.liters} L</strong></div>
                 </div>
 
                 <div className="flex justify-between items-center text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-450 block">Log Cost</span>
+                    <span className="text-[10px] text-slate-400 block">Log Cost</span>
                     <strong className="text-slate-800">${l.cost}</strong>
                   </div>
                   <button
                     onClick={() => handleDelete(l.id)}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-650"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
