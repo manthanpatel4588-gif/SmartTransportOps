@@ -37,13 +37,19 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative p-4">
-      {/* Background soft glowing elements */}
-      <div className="absolute top-0 -left-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl"></div>
+    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative p-4 animate-fadeIn">
+      {/* Background animated floating glow blobs */}
+      <div 
+        className="absolute top-[10%] -left-20 w-[450px] h-[450px] bg-blue-500/8 rounded-full blur-[100px] pointer-events-none animate-float"
+        style={{ animationDelay: '0s' }}
+      ></div>
+      <div 
+        className="absolute bottom-[10%] right-[-100px] w-[500px] h-[500px] bg-indigo-500/6 rounded-full blur-[120px] pointer-events-none animate-float"
+        style={{ animationDelay: '3s' }}
+      ></div>
 
-      {/* Main Container - Split Left/Right Layout (responsive) */}
-      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-lg overflow-hidden relative z-10">
+      {/* Main Container - Split Left/Right Layout (responsive) with page entrance animation */}
+      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-xl overflow-hidden relative z-10 animate-slide-up-fade" style={{ animationDelay: '0ms' }}>
         
         {/* Left Side: Professional SaaS Branding Showcase (hidden on mobile) */}
         <div className="hidden md:flex md:w-1/2 bg-[#0F172A] p-12 flex-col justify-between relative overflow-hidden text-white">
@@ -84,13 +90,13 @@ export default function Login() {
         <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-white">
           <div className="w-full max-w-sm mx-auto flex flex-col gap-6">
             
-            {/* Header */}
-            <div className="flex flex-col gap-1">
+            {/* Header - Staggered delay */}
+            <div className="flex flex-col gap-1 animate-slide-up-fade" style={{ animationDelay: '100ms' }}>
               <h2 className="font-display text-2xl font-extrabold text-slate-900 tracking-tight">Operator Sign In</h2>
               <p className="text-xs text-slate-500">Enter your credentials to access your control workstation.</p>
             </div>
 
-            {/* Error alerts */}
+            {/* Error alerts - Staggered delay */}
             {error && (
               <div className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium animate-shake">
                 <ShieldAlert className="w-4 h-4 text-red-600 flex-shrink-0" />
@@ -101,67 +107,76 @@ export default function Login() {
             {/* Form */}
             <form onSubmit={handleLogin} className="flex flex-col gap-5">
               
-              {/* Email Block */}
-              <div className="flex flex-col gap-2">
+              {/* Email Block - Staggered delay & input padding fix */}
+              <div className="flex flex-col gap-2 animate-slide-up-fade" style={{ animationDelay: '200ms' }}>
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Control Room Email</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="relative flex items-center">
+                  <Mail 
+                    className="text-slate-400" 
+                    style={{ position: 'absolute', left: '0.85rem', width: '1rem', height: '1rem', pointerEvents: 'none' }}
+                  />
                   <input
                     type="email"
                     placeholder="operator@company.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    style={{ paddingLeft: '2.75rem', paddingRight: '1rem' }}
+                    className="w-full py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-300"
                   />
                 </div>
               </div>
 
-              {/* Password Block */}
-              <div className="flex flex-col gap-2">
+              {/* Password Block - Staggered delay & input padding fix */}
+              <div className="flex flex-col gap-2 animate-slide-up-fade" style={{ animationDelay: '300ms' }}>
                 <div className="flex justify-between items-center">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Workstation Password</label>
                   <a href="#" className="text-xs text-brand-blue-600 hover:underline">Forgot?</a>
                 </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <div className="relative flex items-center">
+                  <Lock 
+                    className="text-slate-400" 
+                    style={{ position: 'absolute', left: '0.85rem', width: '1rem', height: '1rem', pointerEvents: 'none' }}
+                  />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all"
+                    style={{ paddingLeft: '2.75rem', paddingRight: '2.75rem' }}
+                    className="w-full py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-sm focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-blue-500/20 transition-all hover:border-slate-300"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                    className="absolute right-3 text-slate-400 hover:text-slate-700 focus:outline-none transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              {/* Remember Me */}
-              <div className="flex items-center">
+              {/* Remember Me - Staggered delay */}
+              <div className="flex items-center animate-slide-up-fade" style={{ animationDelay: '400ms' }}>
                 <input
                   id="remember"
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-brand-blue-600 focus:ring-blue-500/20"
+                  className="w-4 h-4 rounded border-slate-300 text-brand-blue-600 focus:ring-blue-500/20 cursor-pointer"
                 />
                 <label htmlFor="remember" className="ml-2 text-xs text-slate-500 cursor-pointer select-none">
                   Remember my workstation
                 </label>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button - Staggered delay */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-brand-blue-600 to-brand-blue-500 hover:from-brand-blue-500 hover:to-brand-blue-400 active:scale-[0.98] transition-all disabled:opacity-60 shadow-md shadow-blue-500/10 animate-slide-up-fade"
+                style={{ transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)', animationDelay: '500ms' }}
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
@@ -177,7 +192,7 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100 mt-2">
+            <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100 mt-2 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
               Need assistance?{' '}
               <a href="#" className="font-semibold text-brand-blue-600 hover:underline">Contact System Admin</a>
             </div>
