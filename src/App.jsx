@@ -12,6 +12,7 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [sortBy, setSortBy] = useState('default');
+  const [showEligibleOnly, setShowEligibleOnly] = useState(false);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,7 +66,10 @@ export default function App() {
   const filteredDrivers = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     
-    let result = drivers.filter((driver) => {
+    // Filter by eligibility if toggled
+    const sourceDrivers = showEligibleOnly ? getEligibleDrivers(drivers) : drivers;
+    
+    let result = sourceDrivers.filter((driver) => {
       const matchesSearch = 
         driver.name.toLowerCase().includes(query) ||
         driver.licenseNumber.toLowerCase().includes(query) ||
@@ -90,7 +94,7 @@ export default function App() {
     }
 
     return result;
-  }, [drivers, searchQuery, statusFilter, categoryFilter, sortBy]);
+  }, [drivers, searchQuery, statusFilter, categoryFilter, sortBy, showEligibleOnly]);
 
   // --- Utility Functions ---
   const getInitials = (name) => {
@@ -374,6 +378,15 @@ export default function App() {
             )}
           </div>
           <div className="filters-box">
+            <label className="checkbox-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none', fontSize: '14px', color: 'var(--color-text-secondary)', padding: '0 8px' }}>
+              <input
+                type="checkbox"
+                checked={showEligibleOnly}
+                onChange={(e) => setShowEligibleOnly(e.target.checked)}
+                style={{ accentColor: 'var(--color-primary)', width: '16px', height: '16px', cursor: 'pointer' }}
+              />
+              Assignable Only
+            </label>
             <div className="select-wrapper">
               <select 
                 id="filter-status" 
@@ -477,6 +490,36 @@ export default function App() {
                         <span className="status-dot"></span>
                         {driver.status}
                       </span>
+                      <div style={{ marginTop: '6px' }}>
+                        {(() => {
+                          const refDate = new Date('2026-07-12');
+                          const isSuspended = driver.status === 'Suspended';
+                          const isOnTrip = driver.status === 'On Trip';
+                          const isExpired = new Date(driver.expiryDate) < refDate;
+                          const isEligible = !isSuspended && !isOnTrip && !isExpired;
+
+                          if (isEligible) {
+                            return (
+                              <span style={{ fontSize: '11px', color: 'var(--color-success)', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                ● Eligible
+                              </span>
+                            );
+                          }
+                          
+                          let reason = 'Expired';
+                          if (isSuspended) reason = 'Suspended';
+                          else if (isOnTrip) reason = 'On Trip';
+
+                          return (
+                            <span 
+                              style={{ fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: '500', display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }} 
+                              title={isSuspended ? 'Suspended operator' : isOnTrip ? 'Driver is currently on a trip' : 'License has expired'}
+                            >
+                              ● Ineligible ({reason})
+                            </span>
+                          );
+                        })()}
+                      </div>
                     </td>
                     <td className="actions-cell" data-label="Actions">
                       <button className="action-btn btn-edit" onClick={() => openModal(driver.id)} title="Edit Profile" aria-label="Edit Profile">
@@ -667,4 +710,15 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+// --- Eligibility Helper ---
+export function getEligibleDrivers(driversList) {
+  const refDate = new Date('2026-07-12');
+  return driversList.filter((driver) => {
+    const isSuspended = driver.status === 'Suspended';
+    const isOnTrip = driver.status === 'On Trip';
+    const isExpired = new Date(driver.expiryDate) < refDate;
+    return !isSuspended && !isOnTrip && !isExpired;
+  });
 }
