@@ -17,16 +17,22 @@ import {
   Wrench,
   Users,
   CheckCircle,
-  Droplet
+  Droplet,
+  Menu,
+  X
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import TripManagement from '../components/TripManagement';
 import MaintenanceManagement from '../components/MaintenanceManagement';
 import FuelManagement from '../components/FuelManagement';
+import ActiveFleets from '../components/ActiveFleets';
+import LiveTracking from '../components/LiveTracking';
+import SystemSettings from '../components/SystemSettings';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const dispatches = [
     { id: 'TRK-9801', driver: 'Marcus Vance', destination: 'Chicago Hub (ORD1)', status: 'In Transit', ETA: '14:45', progress: 65, alert: false },
@@ -112,10 +118,13 @@ export default function Dashboard() {
         {/* Dashboard Top Header */}
         <header className="flex items-center justify-between px-6 md:px-8 py-5 border-b border-brand-navy-900 bg-brand-navy-950/40 backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-4">
-            {/* Mobile menu logo placeholder */}
-            <div className="md:hidden">
-              <Logo showText={false} iconSize={24} />
-            </div>
+            {/* Mobile Menu Trigger */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden p-2.5 rounded-xl bg-brand-navy-900 border border-brand-navy-800 text-brand-navy-300 hover:text-white transition-all"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <div>
               <h1 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">Operations Hub</h1>
               <p className="text-xs text-brand-navy-400 hidden sm:block">Real-time status updates and telemetry feeds</p>
@@ -157,6 +166,12 @@ export default function Dashboard() {
             <MaintenanceManagement />
           ) : activeTab === 'Fuel Management' ? (
             <FuelManagement />
+          ) : activeTab === 'Active Fleets' ? (
+            <ActiveFleets />
+          ) : activeTab === 'Live Tracking' ? (
+            <LiveTracking />
+          ) : activeTab === 'System Settings' ? (
+            <SystemSettings />
           ) : (
             <>
               {/* Live Alert banner if any */}
@@ -311,6 +326,68 @@ export default function Dashboard() {
           )}
         </div>
       </main>
+
+      {/* Mobile Drawer Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-brand-navy-950/95 z-40 flex flex-col p-6 md:hidden animate-fadeIn">
+          <div className="flex items-center justify-between border-b border-brand-navy-900 pb-5 mb-6">
+            <Logo iconSize={26} textSize="text-lg" />
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 rounded-xl bg-brand-navy-900 border border-brand-navy-800 text-brand-navy-300 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <nav className="flex-1 space-y-2 overflow-y-auto">
+            {[
+              { name: 'Overview', icon: LayoutDashboard },
+              { name: 'Trip Management', icon: Compass },
+              { name: 'Maintenance', icon: Wrench },
+              { name: 'Fuel Management', icon: Droplet },
+              { name: 'Active Fleets', icon: Truck, badge: '1,842' },
+              { name: 'Live Tracking', icon: Navigation },
+              { name: 'System Settings', icon: Settings }
+            ].map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setActiveTab(item.name);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-semibold transition-all ${
+                  activeTab === item.name
+                    ? 'bg-brand-blue-600 text-white shadow-lg'
+                    : 'text-brand-navy-400 hover:text-white hover:bg-brand-navy-900'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5" />
+                  <span>{item.name}</span>
+                </div>
+                {item.badge && (
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === item.name ? 'bg-white/20 text-white' : 'bg-brand-navy-800 text-brand-blue-400'
+                  }`}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+
+          <div className="border-t border-brand-navy-900 pt-6">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Operator Sign Out</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
