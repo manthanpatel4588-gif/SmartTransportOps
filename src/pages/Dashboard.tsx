@@ -16,11 +16,13 @@ import {
   ArrowDownRight,
   Wrench,
   Users,
-  CheckCircle
+  CheckCircle,
+  Droplet
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import TripManagement from '../components/TripManagement';
 import MaintenanceManagement from '../components/MaintenanceManagement';
+import FuelManagement from '../components/FuelManagement';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -51,6 +53,7 @@ export default function Dashboard() {
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
               { name: 'Maintenance', icon: Wrench },
+              { name: 'Fuel Management', icon: Droplet },
               { name: 'Active Fleets', icon: Truck, badge: '1,842' },
               { name: 'Live Tracking', icon: Navigation },
               { name: 'System Settings', icon: Settings }
@@ -152,6 +155,8 @@ export default function Dashboard() {
             <TripManagement />
           ) : activeTab === 'Maintenance' ? (
             <MaintenanceManagement />
+          ) : activeTab === 'Fuel Management' ? (
+            <FuelManagement />
           ) : (
             <>
               {/* Live Alert banner if any */}
