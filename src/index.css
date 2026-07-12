@@ -1115,8 +1115,8 @@ select option {
 
 body {
   font-family: var(--font-sans);
-  background-color: #050814;
-  color: #f8fafc;
+  background-color: #F5F7FA;
+  color: #0F172A;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -1129,14 +1129,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #94A3B8;
 }
 
 @keyframes slideUpFade {
@@ -1163,85 +1163,3 @@ body {
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
-
-/* Global Dark Glassmorphism SaaS Overrides for Sub-Components */
-.bg-white {
-  background-color: rgba(16, 22, 42, 0.6) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  backdrop-filter: blur(16px) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
-}
-
-.text-slate-800 {
-  color: #cbd5e1 !important;
-}
-
-.text-slate-900 {
-  color: #ffffff !important;
-}
-
-.text-slate-700 {
-  color: #94a3b8 !important;
-}
-
-.text-slate-600 {
-  color: #64748b !important;
-}
-
-.text-slate-500 {
-  color: #475569 !important;
-}
-
-.bg-slate-50 {
-  background-color: rgba(15, 23, 42, 0.5) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #f8fafc !important;
-}
-
-.bg-slate-100 {
-  background-color: rgba(30, 41, 59, 0.4) !important;
-}
-
-.border-slate-200 {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-.border-\[\#E5E7EB\] {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Forms, Inputs, & Select Dropdowns Overrides */
-input[type="text"], 
-input[type="email"], 
-input[type="password"], 
-input[type="number"], 
-input[type="date"], 
-select, 
-textarea {
-  background-color: rgba(15, 23, 42, 0.6) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #f8fafc !important;
-}
-
-input::placeholder {
-  color: #475569 !important;
-}
-
-select option {
-  background-color: #0b0f19 !important;
-  color: #f8fafc !important;
-}
-
-/* Modals & Dialogs Overrides */
-.modal-card, 
-.modal-backdrop {
-  background-color: rgba(2, 4, 10, 0.8) !important;
-}
-
-.modal-card {
-  background-color: rgba(10, 13, 26, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
-}
-
-
