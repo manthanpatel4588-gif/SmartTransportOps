@@ -37,13 +37,13 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative">
+    <div className="flex min-h-screen w-full bg-[#F5F7FA] text-slate-800 font-sans overflow-hidden items-center justify-center relative p-4">
       {/* Background soft glowing elements */}
       <div className="absolute top-0 -left-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl"></div>
 
       {/* Main Container - Split Left/Right Layout (responsive) */}
-      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-lg overflow-hidden relative z-10 m-4">
+      <div className="flex w-full max-w-5xl h-[640px] bg-white border border-[#E5E7EB] rounded-2xl shadow-lg overflow-hidden relative z-10">
         
         {/* Left Side: Professional SaaS Branding Showcase (hidden on mobile) */}
         <div className="hidden md:flex md:w-1/2 bg-[#0F172A] p-12 flex-col justify-between relative overflow-hidden text-white">
@@ -58,8 +58,8 @@ export default function Login() {
             <Logo textSize="text-xl" iconSize={28} />
           </div>
 
-          <div className="relative z-10 space-y-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 border border-blue-500/30 text-blue-400">
+          <div className="relative z-10 flex flex-col gap-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 border border-blue-500/30 text-blue-400 self-start">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping"></span>
               Global Fleet Control Active
             </span>
@@ -82,12 +82,12 @@ export default function Login() {
 
         {/* Right Side: Clean Login Form */}
         <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 bg-white">
-          <div className="w-full max-w-sm mx-auto space-y-6">
+          <div className="w-full max-w-sm mx-auto flex flex-col gap-6">
             
             {/* Header */}
-            <div>
+            <div className="flex flex-col gap-1">
               <h2 className="font-display text-2xl font-extrabold text-slate-900 tracking-tight">Operator Sign In</h2>
-              <p className="text-xs text-slate-500 mt-1">Enter your credentials to access your control workstation.</p>
+              <p className="text-xs text-slate-500">Enter your credentials to access your control workstation.</p>
             </div>
 
             {/* Error alerts */}
@@ -99,8 +99,10 @@ export default function Login() {
             )}
 
             {/* Form */}
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-1.5">
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+              
+              {/* Email Block */}
+              <div className="flex flex-col gap-2">
                 <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Control Room Email</label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -115,7 +117,8 @@ export default function Login() {
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              {/* Password Block */}
+              <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Workstation Password</label>
                   <a href="#" className="text-xs text-brand-blue-600 hover:underline">Forgot?</a>
@@ -174,7 +177,7 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+            <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100 mt-2">
               Need assistance?{' '}
               <a href="#" className="font-semibold text-brand-blue-600 hover:underline">Contact System Admin</a>
             </div>
