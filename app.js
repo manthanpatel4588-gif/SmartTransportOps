@@ -136,34 +136,53 @@ function switchTab(tab) {
     const sectionDrivers = document.getElementById("section-drivers");
     const sectionVehicles = document.getElementById("section-vehicles");
     const sectionExpenses = document.getElementById("section-expenses");
+    const sectionTests = document.getElementById("section-tests");
     const navDrivers = document.getElementById("nav-drivers");
     const navVehicles = document.getElementById("nav-vehicles");
     const navExpenses = document.getElementById("nav-expenses");
+    const navTests = document.getElementById("nav-tests");
 
     if (tab === 'drivers') {
         navDrivers.classList.add('active');
         navVehicles.classList.remove('active');
         if (navExpenses) navExpenses.classList.remove('active');
+        if (navTests) navTests.classList.remove('active');
         sectionDrivers.style.display = 'block';
         sectionVehicles.style.display = 'none';
         sectionExpenses.style.display = 'none';
+        sectionTests.style.display = 'none';
         renderApp();
     } else if (tab === 'vehicles') {
         navDrivers.classList.remove('active');
         navVehicles.classList.add('active');
         if (navExpenses) navExpenses.classList.remove('active');
+        if (navTests) navTests.classList.remove('active');
         sectionDrivers.style.display = 'none';
         sectionVehicles.style.display = 'block';
         sectionExpenses.style.display = 'none';
+        sectionTests.style.display = 'none';
         // Rendering handled automatically by React!
     } else if (tab === 'expenses') {
         navDrivers.classList.remove('active');
         navVehicles.classList.remove('active');
         if (navExpenses) navExpenses.classList.add('active');
+        if (navTests) navTests.classList.remove('active');
         sectionDrivers.style.display = 'none';
         sectionVehicles.style.display = 'none';
         sectionExpenses.style.display = 'block';
+        sectionTests.style.display = 'none';
         // Rendering handled automatically by React!
+    } else if (tab === 'tests') {
+        navDrivers.classList.remove('active');
+        navVehicles.classList.remove('active');
+        if (navExpenses) navExpenses.classList.remove('active');
+        if (navTests) navTests.classList.add('active');
+        sectionDrivers.style.display = 'none';
+        sectionVehicles.style.display = 'none';
+        sectionExpenses.style.display = 'none';
+        sectionTests.style.display = 'block';
+        // Trigger verification sync inside react component
+        window.dispatchEvent(new Event('run-validation-tests'));
     }
 }
 
@@ -172,6 +191,7 @@ function bindEvents() {
     const navDrivers = document.getElementById("nav-drivers");
     const navVehicles = document.getElementById("nav-vehicles");
     const navExpenses = document.getElementById("nav-expenses");
+    const navTests = document.getElementById("nav-tests");
 
     // Tab switching triggers
     navDrivers.addEventListener("click", (e) => {
@@ -186,6 +206,12 @@ function bindEvents() {
         navExpenses.addEventListener("click", (e) => {
             e.preventDefault();
             switchTab('expenses');
+        });
+    }
+    if (navTests) {
+        navTests.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchTab('tests');
         });
     }
 
@@ -213,6 +239,26 @@ function bindEvents() {
         if (e.target === deleteModal) closeDeleteModal();
     });
 }
+
+// Reusable global helper function to fetch only available drivers for dispatch
+window.getAvailableDrivers = function() {
+    const stored = localStorage.getItem("smartops_drivers");
+    if (!stored) return [];
+    try {
+        const list = JSON.parse(stored);
+        const refDate = new Date("2026-07-12");
+        return list.filter(d => {
+            const isSuspended = d.status === "Suspended";
+            const isOnTrip = d.status === "On Trip";
+            const isExpired = d.expiryDate ? (new Date(d.expiryDate) < refDate) : false;
+            
+            return !isSuspended && !isOnTrip && !isExpired && d.status === "Available";
+        });
+    } catch (e) {
+        console.error("Error parsing drivers:", e);
+        return [];
+    }
+};
 
 // Generate initials from name (e.g. John Doe -> JD)
 function getInitials(name) {
