@@ -43,6 +43,44 @@ window.validateCargoCapacity = function(vehicleCapacity, cargoWeight) {
     };
 };
 
+// Reusable helper to update a vehicle's status in storage and trigger a sync event
+function updateVehicleStatusInStorage(vehicle, newStatus) {
+    const stored = localStorage.getItem("smartops_vehicles");
+    if (!stored) return;
+    try {
+        let list = JSON.parse(stored);
+        let updated = false;
+        
+        list = list.map(v => {
+            const targetMatch = (typeof vehicle === 'object' && vehicle !== null) 
+                ? (v.id === vehicle.id || v.registration === vehicle.registration)
+                : (v.id === vehicle || v.registration === vehicle);
+                
+            if (targetMatch) {
+                updated = true;
+                return { ...v, status: newStatus };
+            }
+            return v;
+        });
+
+        if (updated) {
+            localStorage.setItem("smartops_vehicles", JSON.stringify(list));
+            // Alert React components to synchronize state
+            window.dispatchEvent(new Event('vehicles-updated'));
+        }
+    } catch (e) {
+        console.error("Failed to update vehicle status in maintenance workflow:", e);
+    }
+}
+
+window.activateMaintenance = function(vehicle) {
+    updateVehicleStatusInStorage(vehicle, "In Shop");
+};
+
+window.completeMaintenance = function(vehicle) {
+    updateVehicleStatusInStorage(vehicle, "Available");
+};
+
 const DEFAULT_VEHICLES = [
     {
         id: "veh_1",
@@ -623,15 +661,24 @@ function VehicleRegistryApp() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [activeVehicle, setActiveVehicle] = useState(null);
 
-    // Initial load from localStorage
+    // Initial load from localStorage & Sync Event Listener
     useEffect(() => {
-        const stored = localStorage.getItem("smartops_vehicles");
-        if (stored) {
-            setVehicles(JSON.parse(stored));
-        } else {
-            setVehicles(DEFAULT_VEHICLES);
-            localStorage.setItem("smartops_vehicles", JSON.stringify(DEFAULT_VEHICLES));
-        }
+        const loadVehicles = () => {
+            const stored = localStorage.getItem("smartops_vehicles");
+            if (stored) {
+                setVehicles(JSON.parse(stored));
+            } else {
+                setVehicles(DEFAULT_VEHICLES);
+                localStorage.setItem("smartops_vehicles", JSON.stringify(DEFAULT_VEHICLES));
+            }
+        };
+
+        loadVehicles();
+
+        window.addEventListener("vehicles-updated", loadVehicles);
+        return () => {
+            window.removeEventListener("vehicles-updated", loadVehicles);
+        };
     }, []);
 
     // Save changes helper
