@@ -242,23 +242,23 @@ export default function Dashboard() {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden sm:block">
-              <span className="text-[10px] uppercase tracking-wider text-[#6B7280] font-bold">Logistics Command Console</span>
+            <div>
+              <h1 className="font-display text-xl font-extrabold tracking-tight text-[#111827]">{activeTab}</h1>
             </div>
           </div>
 
-          {/* Centered Search Bar */}
-          <div className="flex-1 max-w-lg mx-8 relative hidden md:block">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search operators, dispatches, fleets, logs..."
-              className="w-full pl-10 pr-4 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
-            />
-          </div>
-
-          {/* Header Controls & Profile Dropdown */}
+          {/* Header Controls (Search & Notifications & Profile on the right side - Prevents Title Overlaps) */}
           <div className="flex items-center gap-4">
+            {/* Search Bar - Fixed width on right side to prevent title overlaps */}
+            <div className="relative hidden lg:block">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search fleets, routes, operators..."
+                className="w-64 pl-9 pr-4 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
+              />
+            </div>
+
             {/* Notification Bell */}
             <button className="relative p-2 rounded-lg bg-white border border-[#E5E7EB] text-[#6B7280] hover:text-[#111827] transition-all">
               <Bell className="w-4 h-4" />
@@ -274,7 +274,7 @@ export default function Dashboard() {
                 <div className="w-6.5 h-6.5 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
                   OP
                 </div>
-                <span className="text-xs font-semibold text-[#111827] hidden lg:inline">Operator 402</span>
+                <span className="text-xs font-semibold text-[#111827] hidden sm:inline">Operator 402</span>
                 <ChevronDown className="w-3.5 h-3.5 text-[#6B7280]" />
               </button>
 
@@ -302,7 +302,7 @@ export default function Dashboard() {
                   <div className="border-t border-slate-100 my-1"></div>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 text-left"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-650 hover:bg-red-55 text-left"
                   >
                     <LogOut className="w-3.5 h-3.5 text-red-650" />
                     <span>Sign Out</span>
@@ -313,7 +313,7 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Dashboard Grid Content - 32px vertical spacing between sections (gap-8/gap-10) and 32px padding (p-8/p-10) */}
+        {/* Dashboard Grid Content - 32px vertical spacing between sections (gap-10) and 32px padding (p-8 md:p-10) */}
         <div className="p-8 md:p-10 flex flex-col gap-10 w-full min-h-screen animate-fadeIn">
           
           {activeTab === 'Trip Management' ? (
@@ -390,30 +390,30 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              {/* Summary Metric Cards - One Row KPI layout on desktop (lg:grid-cols-6) */}
-              {/* Uses rounded-[20px], p-6 for a single compact row, and min-h-[160px] */}
-              {/* Bigger Icons inside solid colored circular backgrounds for high-end SaaS feel */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-stretch w-full animate-fadeIn">
+              {/* Summary Metric Cards - Grid of 3 Columns (doubles size, prevents wrapping & text cuts) */}
+              {/* Uses rounded-[20px], p-8 (32px padding) and flex-grow instead of height restrictions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full animate-fadeIn">
                 {[
                   { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, badgeBg: 'bg-[#2563EB]', iconColor: 'text-white', glow: 'shadow-blue-500/10' },
                   { title: 'Available Vehicles', value: kpis.availableVehicles.toLocaleString(), desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true, badgeBg: 'bg-[#22C55E]', iconColor: 'text-white', glow: 'shadow-emerald-500/10' },
-                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At workshop', icon: Wrench, trend: '-0.5%', up: false, badgeBg: 'bg-[#EF4444]', iconColor: 'text-white', glow: 'shadow-rose-500/10' },
+                  { title: 'In Maintenance', value: kpis.inMaintenance.toLocaleString(), desc: 'At workshop bay', icon: Wrench, trend: '-0.5%', up: false, badgeBg: 'bg-[#EF4444]', iconColor: 'text-white', glow: 'shadow-rose-500/10' },
                   { title: 'Active Trips', value: kpis.activeTrips.toLocaleString(), desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true, badgeBg: 'bg-[#6366F1]', iconColor: 'text-white', glow: 'shadow-indigo-500/10' },
                   { title: 'Drivers On Duty', value: kpis.driversOnDuty.toLocaleString(), desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true, badgeBg: 'bg-[#8B5CF6]', iconColor: 'text-white', glow: 'shadow-purple-500/10' },
-                  { title: 'Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true, badgeBg: 'bg-[#06B6D4]', iconColor: 'text-white', glow: 'shadow-cyan-500/10' }
+                  { title: 'Fleet Utilization', value: `${kpis.utilization}%`, desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true, badgeBg: 'bg-[#06B6D4]', iconColor: 'text-white', glow: 'shadow-cyan-500/10' }
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-6 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[175px] animate-slide-up-fade"
+                    className="p-8 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[180px] animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
-                    <div className="relative z-10 flex flex-col justify-between h-full gap-4">
+                    {/* Fixed Height Bug: Using flex-grow instead of height constraints ensures descriptions are never cut off */}
+                    <div className="relative z-10 flex flex-col justify-between flex-grow gap-5">
                       <div className="flex justify-between items-center">
                         {/* Circular solid background for icons */}
-                        <div className={`w-10 h-10 rounded-full ${stat.badgeBg} ${stat.iconColor} ${stat.glow} flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-md`}>
-                          <stat.icon className="w-5 h-5" />
+                        <div className={`w-12 h-12 rounded-full ${stat.badgeBg} ${stat.iconColor} ${stat.glow} flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-md`}>
+                          <stat.icon className="w-6 h-6" />
                         </div>
-                        <span className={`inline-flex items-center gap-0.5 text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                        <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-3 py-1 rounded-full border ${
                           stat.up 
                             ? 'bg-[#E6F4EA] text-[#137333] border-[#CEEAD6]' 
                             : 'bg-[#FCE8E6] text-[#C5221F] border-[#FAD2CF]'
@@ -421,11 +421,11 @@ export default function Dashboard() {
                           {stat.trend}
                         </span>
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280] leading-tight">{stat.title}</h3>
-                        <p className="text-2xl font-display font-black text-[#111827] tracking-tight leading-none">{stat.value}</p>
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280] leading-tight">{stat.title}</h3>
+                        <p className="text-3xl font-display font-black text-[#111827] tracking-tight leading-none">{stat.value}</p>
                       </div>
-                      <p className="text-[10px] text-[#6B7280] font-semibold leading-relaxed">{stat.desc}</p>
+                      <p className="text-sm text-[#6B7280] font-semibold leading-relaxed mt-1">{stat.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -742,7 +742,7 @@ export default function Dashboard() {
           <div className="border-t border-slate-200 pt-6">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-650 bg-red-50 hover:bg-red-100 transition-all"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-red-655 bg-red-50 hover:bg-red-100 transition-all"
             >
               <LogOut className="w-5 h-5" />
               <span>Operator Sign Out</span>
