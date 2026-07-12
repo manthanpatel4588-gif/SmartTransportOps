@@ -5,6 +5,19 @@
 
 const { useState, useEffect, useMemo } = React;
 
+// Reusable global helper function to fetch only available vehicles for trips
+window.getAvailableVehicles = function() {
+    const stored = localStorage.getItem("smartops_vehicles");
+    if (!stored) return [];
+    try {
+        const list = JSON.parse(stored);
+        return Array.isArray(list) ? list.filter(v => v.status === "Available") : [];
+    } catch (e) {
+        console.error("Error parsing vehicles:", e);
+        return [];
+    }
+};
+
 const DEFAULT_VEHICLES = [
     {
         id: "veh_1",
