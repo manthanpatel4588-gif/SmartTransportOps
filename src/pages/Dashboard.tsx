@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import TripManagement from '../components/TripManagement';
+import MaintenanceManagement from '../components/MaintenanceManagement';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ export default function Dashboard() {
             {[
               { name: 'Overview', icon: LayoutDashboard },
               { name: 'Trip Management', icon: Compass },
+              { name: 'Maintenance', icon: Wrench },
               { name: 'Active Fleets', icon: Truck, badge: '1,842' },
               { name: 'Live Tracking', icon: Navigation },
               { name: 'System Settings', icon: Settings }
@@ -148,6 +150,8 @@ export default function Dashboard() {
         <div className="flex-1 p-6 md:p-8 space-y-6">
           {activeTab === 'Trip Management' ? (
             <TripManagement />
+          ) : activeTab === 'Maintenance' ? (
+            <MaintenanceManagement />
           ) : (
             <>
               {/* Live Alert banner if any */}
