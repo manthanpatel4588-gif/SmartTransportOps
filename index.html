@@ -10,6 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel Standalone for JSX compilation in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -182,144 +187,8 @@
                 </section>
             </div>
 
-            <!-- Vehicles Section Container -->
-            <div id="section-vehicles" style="display: none;">
-                <!-- Header -->
-                <header class="dashboard-header">
-                    <div class="header-title-container">
-                        <h1 class="page-title">Vehicle Registry</h1>
-                        <p class="page-subtitle">Manage, monitor, and update your transport fleet assets.</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="btn btn-primary" id="btn-add-vehicle">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            Add Vehicle
-                        </button>
-                    </div>
-                </header>
-
-                <!-- Metrics Cards Panel -->
-                <section class="metrics-grid" id="vehicle-metrics-panel" aria-label="Vehicle KPIs">
-                    <!-- Total Fleet -->
-                    <div class="metric-card bg-glow-blue">
-                        <div class="card-glow"></div>
-                        <div class="metric-header">
-                            <span class="metric-label">Total Fleet</span>
-                            <div class="metric-icon-wrapper text-blue">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                            </div>
-                        </div>
-                        <div class="metric-value" id="vehicle-metric-total">0</div>
-                        <div class="metric-trend text-muted">Registered in database</div>
-                    </div>
-
-                    <!-- Available -->
-                    <div class="metric-card bg-glow-green">
-                        <div class="card-glow"></div>
-                        <div class="metric-header">
-                            <span class="metric-label">Available</span>
-                            <div class="metric-icon-wrapper text-green">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                            </div>
-                        </div>
-                        <div class="metric-value" id="vehicle-metric-available">0</div>
-                        <div class="metric-trend text-green">Ready for assignment</div>
-                    </div>
-
-                    <!-- On Trip -->
-                    <div class="metric-card bg-glow-yellow">
-                        <div class="card-glow"></div>
-                        <div class="metric-header">
-                            <span class="metric-label">On Trip</span>
-                            <div class="metric-icon-wrapper text-yellow">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                            </div>
-                        </div>
-                        <div class="metric-value" id="vehicle-metric-ontrip">0</div>
-                        <div class="metric-trend text-yellow">Active on transit routes</div>
-                    </div>
-
-                    <!-- In Shop -->
-                    <div class="metric-card bg-glow-red">
-                        <div class="card-glow"></div>
-                        <div class="metric-header">
-                            <span class="metric-label">In Shop</span>
-                            <div class="metric-icon-wrapper text-red">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
-                            </div>
-                        </div>
-                        <div class="metric-value" id="vehicle-metric-inshop">0</div>
-                        <div class="metric-trend text-red">Undergoing maintenance</div>
-                    </div>
-                </section>
-
-                <!-- Filters & Controls -->
-                <section class="controls-panel">
-                    <div class="search-box">
-                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" id="vehicle-search-input" placeholder="Search by name, reg number or type..." autocomplete="off">
-                        <button class="clear-search-btn" id="btn-clear-vehicle-search" aria-label="Clear search" style="display: none;">✕</button>
-                    </div>
-                    <div class="filters-box">
-                        <div class="select-wrapper">
-                            <select id="vehicle-filter-status" aria-label="Filter by Status">
-                                <option value="All">All Statuses</option>
-                                <option value="Available">Available</option>
-                                <option value="On Trip">On Trip</option>
-                                <option value="In Shop">In Shop</option>
-                                <option value="Retired">Retired</option>
-                            </select>
-                        </div>
-                        <div class="select-wrapper">
-                            <select id="vehicle-filter-type" aria-label="Filter by Type">
-                                <option value="All">All Vehicle Types</option>
-                                <option value="Semi-Truck">Semi-Truck</option>
-                                <option value="Box Truck">Box Truck</option>
-                                <option value="Cargo Van">Cargo Van</option>
-                                <option value="Sprinter Van">Sprinter Van</option>
-                                <option value="Flatbed Truck">Flatbed Truck</option>
-                            </select>
-                        </div>
-                        <div class="select-wrapper">
-                            <select id="vehicle-sort-by" aria-label="Sort options">
-                                <option value="default">Sort by: Default</option>
-                                <option value="reg-asc">Reg No. (A-Z)</option>
-                                <option value="name-asc">Name (A-Z)</option>
-                                <option value="capacity-desc">Capacity (High-Low)</option>
-                                <option value="odometer-asc">Odometer (Low-High)</option>
-                                <option value="cost-desc">Cost (High-Low)</option>
-                            </select>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Vehicle Table -->
-                <section class="table-container">
-                    <table class="driver-table" id="vehicle-table">
-                        <thead>
-                            <tr>
-                                <th>Registration</th>
-                                <th>Vehicle Name</th>
-                                <th>Type</th>
-                                <th>Capacity</th>
-                                <th>Odometer (km)</th>
-                                <th>Acquisition Cost</th>
-                                <th>Status</th>
-                                <th class="text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="vehicle-table-body">
-                            <!-- Dynamic content injected here -->
-                        </tbody>
-                    </table>
-                    <!-- Table Empty State -->
-                    <div class="table-empty-state" id="vehicle-table-empty-state" style="display: none;">
-                        <div class="empty-icon">🔍</div>
-                        <h3 class="empty-title">No vehicles match your search</h3>
-                        <p class="empty-subtitle">Try refining your search terms or adjustments to filters.</p>
-                    </div>
-                </section>
-            </div>
+            <!-- Vehicles Section Container (React Mount) -->
+            <div id="section-vehicles" style="display: none;"></div>
         </main>
     </div>
 
@@ -425,112 +294,10 @@
         </div>
     </div>
 
-    <!-- Modal Form (Add & Edit Vehicle) -->
-    <div class="modal-backdrop" id="vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="vehicle-modal-title" style="display: none;">
-        <div class="modal-card">
-            <header class="modal-header">
-                <h2 class="modal-title" id="vehicle-modal-title">Add New Vehicle</h2>
-                <button class="modal-close" id="btn-close-vehicle-modal" aria-label="Close modal">✕</button>
-            </header>
-            <form id="vehicle-form" novalidate>
-                <!-- Hidden inputs -->
-                <input type="hidden" id="form-vehicle-id">
-
-                <div class="form-grid">
-                    <!-- Registration Number -->
-                    <div class="form-group col-span-2">
-                        <label for="input-vehicle-reg" class="required">Registration Number</label>
-                        <input type="text" id="input-vehicle-reg" name="registration" placeholder="e.g. TX-9842-AB" required>
-                        <span class="error-message" id="error-vehicle-reg">Registration number is required and must be unique.</span>
-                    </div>
-
-                    <!-- Vehicle Name -->
-                    <div class="form-group">
-                        <label for="input-vehicle-name" class="required">Vehicle Name</label>
-                        <input type="text" id="input-vehicle-name" name="name" placeholder="e.g. Stellar Hauler" required>
-                        <span class="error-message" id="error-vehicle-name">Vehicle name is required.</span>
-                    </div>
-
-                    <!-- Vehicle Type -->
-                    <div class="form-group">
-                        <label for="input-vehicle-type" class="required">Vehicle Type</label>
-                        <div class="select-wrapper">
-                            <select id="input-vehicle-type" name="type" required>
-                                <option value="" disabled selected hidden>Select type</option>
-                                <option value="Semi-Truck">Semi-Truck</option>
-                                <option value="Box Truck">Box Truck</option>
-                                <option value="Cargo Van">Cargo Van</option>
-                                <option value="Sprinter Van">Sprinter Van</option>
-                                <option value="Flatbed Truck">Flatbed Truck</option>
-                            </select>
-                        </div>
-                        <span class="error-message" id="error-vehicle-type">Please select a type.</span>
-                    </div>
-
-                    <!-- Max Capacity -->
-                    <div class="form-group">
-                        <label for="input-vehicle-capacity" class="required">Maximum Capacity (kg)</label>
-                        <input type="number" id="input-vehicle-capacity" name="capacity" placeholder="e.g. 15000" min="1" required>
-                        <span class="error-message" id="error-vehicle-capacity">Capacity must be a positive number.</span>
-                    </div>
-
-                    <!-- Odometer -->
-                    <div class="form-group">
-                        <label for="input-vehicle-odometer" class="required">Odometer Reading (km)</label>
-                        <input type="number" id="input-vehicle-odometer" name="odometer" placeholder="e.g. 84210" min="0" required>
-                        <span class="error-message" id="error-vehicle-odometer">Odometer must be 0 or greater.</span>
-                    </div>
-
-                    <!-- Acquisition Cost -->
-                    <div class="form-group">
-                        <label for="input-vehicle-cost" class="required">Acquisition Cost ($)</label>
-                        <input type="number" id="input-vehicle-cost" name="cost" placeholder="e.g. 65000" min="0" required>
-                        <span class="error-message" id="error-vehicle-cost">Acquisition cost must be 0 or greater.</span>
-                    </div>
-
-                    <!-- Status -->
-                    <div class="form-group">
-                        <label for="input-vehicle-status" class="required">Status</label>
-                        <div class="select-wrapper">
-                            <select id="input-vehicle-status" name="status" required>
-                                <option value="Available">Available</option>
-                                <option value="On Trip">On Trip</option>
-                                <option value="In Shop">In Shop</option>
-                                <option value="Retired">Retired</option>
-                            </select>
-                        </div>
-                        <span class="error-message" id="error-vehicle-status">Please select a status.</span>
-                    </div>
-                </div>
-
-                <footer class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-vehicle-modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit-vehicle-form">Save Vehicle</button>
-                </footer>
-            </form>
-        </div>
-    </div>
-
-    <!-- Confirm Delete Vehicle Modal -->
-    <div class="modal-backdrop" id="delete-vehicle-modal" role="dialog" aria-modal="true" aria-labelledby="delete-vehicle-title" style="display: none;">
-        <div class="modal-card modal-confirm">
-            <header class="modal-header">
-                <h2 class="modal-title text-danger" id="delete-vehicle-title">Delete Vehicle?</h2>
-                <button class="modal-close" id="btn-close-delete-vehicle-modal" aria-label="Close modal">✕</button>
-            </header>
-            <div class="modal-body">
-                <p>Are you sure you want to delete vehicle <strong id="delete-vehicle-name">this vehicle</strong>? This action is permanent and cannot be undone.</p>
-            </div>
-            <footer class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-cancel-delete-vehicle">Cancel</button>
-                <button type="button" class="btn btn-danger" id="btn-confirm-delete-vehicle">Delete Vehicle</button>
-            </footer>
-        </div>
-    </div>
-
     <!-- Toast Notification System -->
     <div class="toast-container" id="toast-container"></div>
 
     <script src="app.js"></script>
+    <script type="text/babel" src="vehicles-react.js"></script>
 </body>
 </html>
