@@ -90,15 +90,12 @@ export default function App() {
   // Expense Form
   const [expenseFormData, setExpenseFormData] = useState({
     vehicleId: '',
-    expenseType: 'fuel', // 'fuel', 'maintenance', 'other'
+    expenseType: 'fuel',
     date: '',
-    // Fuel parameters
     fuelQuantity: '',
     costPerLiter: '',
-    // Maintenance parameters
     serviceType: '',
     maintenanceCost: '',
-    // Other parameters
     otherType: '',
     otherAmount: ''
   });
@@ -150,7 +147,67 @@ export default function App() {
     }, 4000);
   };
 
-  // --- Metrics Aggregations (re-calculated in real time) ---
+  // --- Reset Demo Datasets ---
+  const handleResetDemoData = () => {
+    localStorage.clear();
+    setDrivers([...DEFAULT_DRIVERS]);
+    setVehicles([...DEFAULT_VEHICLES]);
+    setTrips([...DEFAULT_TRIPS]);
+    setFuelLogs([...DEFAULT_FUEL_LOGS]);
+    setMaintenanceLogs([...DEFAULT_MAINTENANCE_LOGS]);
+    setOtherExpenses([...DEFAULT_EXPENSES]);
+    triggerToast('All database values reset to pristine Demo Dataset.', 'warning');
+  };
+
+  // --- CSV Export Helper ---
+  const downloadCSV = (headers, rows, filename) => {
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(val => {
+        const cleanVal = String(val).replace(/"/g, '""');
+        return cleanVal.includes(',') || cleanVal.includes('"') || cleanVal.includes('\n')
+          ? `"${cleanVal}"`
+          : cleanVal;
+      }).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportDrivers = () => {
+    const headers = ['Driver Name', 'License Number', 'Category', 'Expiry Date', 'Contact Number', 'Safety Score', 'Status'];
+    const rows = filteredDrivers.map(d => [d.name, d.licenseNumber, d.licenseCategory, d.expiryDate, d.contactNumber, d.safetyScore, d.status]);
+    downloadCSV(headers, rows, 'smartops_drivers.csv');
+    triggerToast('Drivers database exported successfully to CSV.', 'success');
+  };
+
+  const handleExportVehicles = () => {
+    const headers = ['Vehicle Model', 'Plate Number', 'Capacity', 'Status'];
+    const rows = filteredVehicles.map(v => [v.name, v.plateNumber, v.capacity, v.status]);
+    downloadCSV(headers, rows, 'smartops_vehicles.csv');
+    triggerToast('Vehicles fleet exported successfully to CSV.', 'success');
+  };
+
+  const handleExportTrips = () => {
+    const headers = ['Trip ID', 'Transit Route', 'Assigned Operator', 'Assigned Vehicle', 'Trip Status'];
+    const rows = filteredTrips.map(t => {
+      const dName = drivers.find(d => d.id === t.driverId)?.name || 'Unassigned';
+      const vName = vehicles.find(v => v.id === t.vehicleId)?.name || 'Unassigned';
+      return [t.id, t.route, dName, vName, t.status];
+    });
+    downloadCSV(headers, rows, 'smartops_trips.csv');
+    triggerToast('Trips ledger exported successfully to CSV.', 'success');
+  };
+
+  // --- Metrics Aggregations ---
   const metrics = useMemo(() => {
     const total = drivers.length;
     const available = drivers.filter((d) => d.status === 'Available').length;
@@ -230,32 +287,6 @@ export default function App() {
   const vehicleCostSummary = useMemo(() => {
     return getVehicleCostSummary(vehicles, fuelLogs, maintenanceLogs, otherExpenses);
   }, [vehicles, fuelLogs, maintenanceLogs, otherExpenses]);
-
-  // --- Utility Functions ---
-  const getInitials = (name) => {
-    if (!name) return 'DR';
-    const parts = name.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
-  const getExpiryStatus = (dateString) => {
-    if (!dateString) return { text: 'N/A', className: '' };
-    const refDate = new Date('2026-07-12');
-    const expiryDate = new Date(dateString);
-    const diffTime = expiryDate - refDate;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const formatted = expiryDate.toLocaleDateString(undefined, options);
-
-    if (diffDays < 0) {
-      return { text: `Expired (${formatted})`, className: 'expiry-alert' };
-    } else if (diffDays <= 30) {
-      return { text: `Expiring soon (${diffDays}d)`, className: 'expiry-alert' };
-    }
-    return { text: formatted, className: '' };
-  };
 
   // --- Driver CRUD Handlers ---
   const openModal = (driverId = null) => {
@@ -625,36 +656,20 @@ export default function App() {
             Expenses
           </button>
         </nav>
-        <div className="sidebar-footer">
-          <span className="version-text">v1.5.0 (Expense Tracking)</span>
+        <div className="sidebar-footer" style={{ gap: '10px', flexDirection: 'column', padding: '16px 8px' }}>
+          <button 
+            className="btn btn-secondary" 
+            style={{ width: '100%', padding: '6px 10px', fontSize: '11px', borderColor: 'rgba(239,68,68,0.2)' }}
+            onClick={handleResetDemoData}
+          >
+            Reset Demo Data
+          </button>
+          <span className="version-text">v1.6.0 (Hackathon Ready)</span>
         </div>
       </aside>
 
       {/* Main Body */}
       <main className="main-content">
-        {/* Header */}
-        <header className="dashboard-header">
-          <div className="header-title-container">
-            <h1 className="page-title">{tabDetails.title}</h1>
-            <p className="page-subtitle">{tabDetails.subtitle}</p>
-          </div>
-          {tabDetails.buttonText && (
-            <div className="header-actions">
-              <button 
-                className="btn btn-primary" 
-                onClick={
-                  activeTab === 'trips' ? openTripModal : 
-                  activeTab === 'expenses' ? openExpenseModal : 
-                  () => openModal()
-                }
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                {tabDetails.buttonText}
-              </button>
-            </div>
-          )}
-        </header>
-
         {/* Dynamic Metrics Cards Panel */}
         {activeTab !== 'expenses' ? (
           <section className="metrics-grid" id="metrics-panel" aria-label="Key Performance Indicators">
@@ -787,11 +802,7 @@ export default function App() {
                   Assignable Only
                 </label>
                 <div className="select-wrapper">
-                  <select 
-                    id="filter-status" 
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
+                  <select id="filter-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                     <option value="All">All Statuses</option>
                     <option value="Available">Available</option>
                     <option value="On Trip">On Trip</option>
@@ -800,11 +811,7 @@ export default function App() {
                   </select>
                 </div>
                 <div className="select-wrapper">
-                  <select 
-                    id="filter-category" 
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                  >
+                  <select id="filter-category" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
                     <option value="All">All Categories</option>
                     <option value="Class A">Class A</option>
                     <option value="Class B">Class B</option>
@@ -813,11 +820,7 @@ export default function App() {
                   </select>
                 </div>
                 <div className="select-wrapper">
-                  <select 
-                    id="sort-by" 
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                  >
+                  <select id="sort-by" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                     <option value="default">Sort by: Default</option>
                     <option value="name-asc">Name (A-Z)</option>
                     <option value="name-desc">Name (Z-A)</option>
@@ -826,6 +829,7 @@ export default function App() {
                     <option value="expiry-asc">Expiry (Soonest First)</option>
                   </select>
                 </div>
+                <button className="btn btn-secondary" onClick={handleExportDrivers}>Export CSV</button>
               </div>
             </section>
 
@@ -855,7 +859,6 @@ export default function App() {
                     else if (driver.status === 'Off Duty') statusClass = 'offduty';
                     else if (driver.status === 'Suspended') statusClass = 'suspended';
 
-                    // Internal evaluation of assignment eligibility
                     const refDate = new Date('2026-07-12');
                     const isSuspended = driver.status === 'Suspended';
                     const isOnTrip = driver.status === 'On Trip';
@@ -953,6 +956,7 @@ export default function App() {
                   <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
                 )}
               </div>
+              <button className="btn btn-secondary" onClick={handleExportVehicles}>Export CSV</button>
             </section>
 
             {/* Vehicles Table */}
@@ -1025,6 +1029,7 @@ export default function App() {
                   <button className="clear-search-btn" onClick={() => setSearchQuery('')}>✕</button>
                 )}
               </div>
+              <button className="btn btn-secondary" onClick={handleExportTrips}>Export CSV</button>
             </section>
 
             {/* Trips Dispatch Table */}
@@ -1198,7 +1203,6 @@ export default function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Map Fuel Logs */}
                   {fuelLogs.map((log) => {
                     const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
                     const amount = Math.round((log.fuelQuantity * log.costPerLiter) * 100) / 100;
@@ -1212,7 +1216,6 @@ export default function App() {
                       </tr>
                     );
                   })}
-                  {/* Map Maintenance Logs */}
                   {maintenanceLogs.map((log) => {
                     const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
                     return (
@@ -1225,7 +1228,6 @@ export default function App() {
                       </tr>
                     );
                   })}
-                  {/* Map Other Expenses */}
                   {otherExpenses.map((log) => {
                     const vName = vehicles.find((v) => v.id === log.vehicleId)?.name || 'Unknown';
                     return (
@@ -1356,13 +1358,7 @@ export default function App() {
                 <div className="form-group">
                   <label htmlFor="input-status" className="required">Status</label>
                   <div className="select-wrapper">
-                    <select
-                      id="input-status"
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                      required
-                    >
+                    <select id="input-status" name="status" value={formData.status} onChange={handleInputChange} required>
                       <option value="Available">Available</option>
                       <option value="On Trip">On Trip</option>
                       <option value="Off Duty">Off Duty</option>
