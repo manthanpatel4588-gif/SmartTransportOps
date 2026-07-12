@@ -10,12 +10,13 @@ import {
   TrendingUp,
   Compass,
   Bell,
-  Clock,
-  Activity,
   Search,
   Filter,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Wrench,
+  Users,
+  CheckCircle
 } from 'lucide-react';
 import Logo from '../components/Logo';
 
@@ -159,28 +160,30 @@ export default function Dashboard() {
           </div>
 
           {/* 3. Summary Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             {[
-              { title: 'Active Trucks', value: '1,248', desc: 'Out of 1,842 total', icon: Truck, trend: '+4.2%', up: true },
-              { title: 'Total Shipments', value: '8,410', desc: 'Last 24 hours', icon: Activity, trend: '+12.4%', up: true },
-              { title: 'System Load Factor', value: '87.6%', desc: 'Optimal utilization', icon: TrendingUp, trend: '-2.1%', up: false },
-              { title: 'Operator Dispatch SLA', value: '99.4%', desc: 'Target: >98%', icon: Clock, trend: '+0.3%', up: true }
+              { title: 'Active Vehicles', value: '1,248', desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true },
+              { title: 'Available Vehicles', value: '482', desc: 'Ready for dispatch', icon: CheckCircle, trend: '+1.8%', up: true },
+              { title: 'In Maintenance', value: '112', desc: 'At garage facility', icon: Wrench, trend: '-0.5%', up: false },
+              { title: 'Active Trips', value: '956', desc: 'Active route legs', icon: Navigation, trend: '+12.4%', up: true },
+              { title: 'Drivers On Duty', value: '1,180', desc: '82% total workforce', icon: Users, trend: '+2.3%', up: true },
+              { title: 'Fleet Utilization', value: '87.6%', desc: 'Target optimal: 85%', icon: TrendingUp, trend: '+3.4%', up: true }
             ].map((stat, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-brand-navy-900/60 border border-brand-navy-800 backdrop-blur-sm relative overflow-hidden group hover:border-brand-navy-700 transition-all duration-300">
+              <div key={idx} className="p-5 rounded-2xl bg-brand-navy-900/60 border border-brand-navy-800 backdrop-blur-sm relative overflow-hidden group hover:border-brand-navy-700 transition-all duration-300">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="p-2.5 rounded-xl bg-brand-navy-850 text-brand-blue-400 group-hover:bg-brand-blue-600 group-hover:text-white transition-colors duration-300">
+                  <div className="p-2 rounded-xl bg-brand-navy-850 text-brand-blue-400 group-hover:bg-brand-blue-600 group-hover:text-white transition-colors duration-300">
                     <stat.icon className="w-5 h-5" />
                   </div>
-                  <span className={`inline-flex items-center gap-0.5 text-xs font-bold px-2 py-0.5 rounded-full ${
+                  <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                     stat.up ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
                   }`}>
-                    {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                    {stat.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
                     {stat.trend}
                   </span>
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-brand-navy-400 mb-1">{stat.title}</h3>
-                <p className="text-3xl font-display font-extrabold text-white mb-1">{stat.value}</p>
-                <p className="text-xs text-brand-navy-500">{stat.desc}</p>
+                <h3 className="text-[10px] font-bold uppercase tracking-wider text-brand-navy-400 mb-1 leading-tight truncate">{stat.title}</h3>
+                <p className="text-2xl font-display font-extrabold text-white mb-1">{stat.value}</p>
+                <p className="text-[10px] text-brand-navy-500 truncate leading-none">{stat.desc}</p>
               </div>
             ))}
           </div>
