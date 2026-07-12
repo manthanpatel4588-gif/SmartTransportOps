@@ -575,7 +575,7 @@ select option {
 .safety-score-bar {
     height: 100%;
     border-radius: var(--radius-full);
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 1.0s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Status Pill Badges */
@@ -753,7 +753,7 @@ select option {
 }
 
 /* Form Styles */
-#driver-form {
+.driver-form-container {
     padding: 24px;
 }
 
@@ -1071,7 +1071,7 @@ select option {
         display: flex;
         flex-direction: column;
     }
-    #driver-form {
+    .driver-form-container {
         overflow-y: auto;
         flex-grow: 1;
     }
