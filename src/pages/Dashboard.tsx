@@ -154,10 +154,10 @@ export default function Dashboard() {
               <button
                 key={item.name}
                 onClick={() => setActiveTab(item.name)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 active:scale-[0.98] ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-4 ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)]'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-blue-400'
+                    : 'text-slate-405 border-transparent hover:text-white hover:bg-slate-900/50'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -243,8 +243,8 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {/* Dashboard Grid Content - 24px-32px margins and spacing - flex flex-col gap-8 solves overlaps! */}
-        <div className="p-6 md:p-8 flex flex-col gap-8 w-full min-h-screen animate-fadeIn">
+        {/* Dashboard Grid Content - p-8 md:p-10 and gap-10 gives the absolute spaciest feel! */}
+        <div className="p-8 md:p-10 flex flex-col gap-10 w-full min-h-screen animate-fadeIn">
           
           {activeTab === 'Trip Management' ? (
             <TripManagement />
@@ -293,12 +293,14 @@ export default function Dashboard() {
                   style={{ backgroundImage: `url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=1200')` }}
                 ></div>
                 
-                <div className="relative z-10 flex flex-col gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 self-start">
+                <div className="relative z-10 flex flex-col gap-3">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 border border-blue-500/20 text-blue-400 self-start">
                     System Telemetry Online
                   </span>
-                  <h2 className="font-display text-2xl font-extrabold text-white">Enterprise Logistics Console</h2>
-                  <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+                  <h2 className="font-display text-3xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-350">
+                    Enterprise Logistics Console
+                  </h2>
+                  <p className="text-sm text-slate-400 max-w-2xl leading-relaxed font-medium">
                     Real-time logistical monitoring, operator dispatch workflows, and fleet maintenance telemetry dashboard. Orchestrate routes, inspect payloads, and log expenses seamlessly.
                   </p>
                 </div>
@@ -306,19 +308,19 @@ export default function Dashboard() {
 
               {/* Weather Alert banner - separated appropriately */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-6 rounded-[20px] bg-amber-500/5 backdrop-blur-md border border-amber-500/20 text-amber-400 shadow-md animate-slide-up-fade" style={{ animationDelay: '50ms' }}>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3.5">
                   <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-500 animate-bounce" style={{ animationDuration: '3s' }} />
                   <div>
-                    <p className="text-sm font-bold text-amber-300">Weather Alert: Midwest Region (ORD1)</p>
+                    <p className="text-sm font-bold text-amber-300 tracking-tight">Weather Alert: Midwest Region (ORD1)</p>
                     <p className="text-xs text-slate-400 mt-1 font-medium leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
-                <button className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-md shadow-amber-600/10">
+                <button className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-550 text-white text-xs font-semibold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-md shadow-amber-600/10">
                   Manage Re-Routing
                 </button>
               </div>
 
-              {/* Summary Metric Cards - Equal height (items-stretch) & Staggered slide entrance */}
+              {/* Summary Metric Cards - Equal height, grid gap, optimized paddings (p-5 pb-6) to fix clipped text descenders */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-stretch w-full">
                 {[
                   { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
@@ -330,12 +332,12 @@ export default function Dashboard() {
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-6 rounded-[20px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:border-blue-500/25 transition-all duration-300 shadow-md flex flex-col justify-between items-stretch animate-slide-up-fade"
+                    className="p-5 pb-6 rounded-[20px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:border-blue-500/25 transition-all duration-300 shadow-md flex flex-col justify-between items-stretch animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
                     <div className="absolute -inset-px bg-gradient-to-r from-blue-500/0 via-blue-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[20px] pointer-events-none" />
-                    <div className="relative z-10 flex flex-col justify-between h-full">
-                      <div className="flex justify-between items-start mb-4">
+                    <div className="relative z-10 flex flex-col gap-4 h-full">
+                      <div className="flex justify-between items-start">
                         <div className={`p-2.5 rounded-xl border ${stat.color} transition-all duration-300 group-hover:scale-105 shadow-xs`}>
                           <stat.icon className="w-5 h-5" />
                         </div>
@@ -348,21 +350,21 @@ export default function Dashboard() {
                           {stat.trend}
                         </span>
                       </div>
-                      <div>
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 leading-tight truncate">{stat.title}</h3>
-                        <p className="text-2xl font-display font-extrabold text-white mb-1 tracking-tight">{stat.value}</p>
+                      <div className="flex flex-col gap-1">
+                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-tight">{stat.title}</h3>
+                        <p className="text-2xl font-display font-extrabold text-white tracking-tight">{stat.value}</p>
                       </div>
-                      <p className="text-[10px] text-slate-550 mt-2 truncate leading-none">{stat.desc}</p>
+                      <p className="text-[10px] text-slate-400 font-medium leading-normal">{stat.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Large Analytics Visualization & Recent Dispatches Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start w-full">
                 
-                {/* Left Column (Feeds + Quick Actions + Analytics charts) - flex gap-8 prevents vertical overlaps! */}
-                <div className="lg:col-span-2 flex flex-col gap-8">
+                {/* Left Column (Feeds + Quick Actions + Analytics charts) - gap-10 prevents overlaps! */}
+                <div className="lg:col-span-2 flex flex-col gap-10">
                   {/* Real-Time Dispatch Feeds */}
                   <div className="p-8 rounded-[20px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 flex flex-col gap-6 shadow-[0_8px_30px_rgba(0,0,0,0.3)] animate-slide-up-fade" style={{ animationDelay: '400ms' }}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -416,7 +418,7 @@ export default function Dashboard() {
                                   {dispatch.status}
                                 </span>
                               </td>
-                              <td className="py-4.5 text-slate-450 font-medium pr-4">{dispatch.ETA}</td>
+                              <td className="py-4.5 text-slate-400 font-medium pr-4">{dispatch.ETA}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -506,15 +508,15 @@ export default function Dashboard() {
                             <action.icon className="w-5 h-5" />
                           </div>
                           <p className="text-xs font-bold text-slate-200 leading-tight group-hover:text-blue-400 transition-colors duration-200">{action.name}</p>
-                          <p className="text-[10px] text-slate-550 mt-1 leading-normal">{action.desc}</p>
+                          <p className="text-[10px] text-slate-500 mt-1 leading-normal">{action.desc}</p>
                         </button>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Right Column (Map + GPS Telemetry Logs) - flex gap-8 prevents vertical overlaps! */}
-                <div className="flex flex-col gap-8">
+                {/* Right Column (Map + GPS Telemetry Logs) - gap-10 prevents vertical overlaps! */}
+                <div className="flex flex-col gap-10">
                   
                   {/* Network Routing Map Card - Glass Card */}
                   <div className="p-8 rounded-[20px] bg-[#0b0f19]/60 backdrop-blur-xl border border-white/10 flex flex-col h-[380px] shadow-[0_8px_30px_rgba(0,0,0,0.3)] hover:scale-[1.01] hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-all duration-300 animate-slide-up-fade" style={{ animationDelay: '600ms' }}>
@@ -523,7 +525,7 @@ export default function Dashboard() {
                       <p className="text-xs text-slate-400">Live visual feed of logistics grid</p>
                     </div>
 
-                    <div className="relative flex-1 my-4 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden flex items-center justify-center shadow-inner">
+                    <div className="relative flex-1 my-4 rounded-xl border border-slate-800 bg-slate-955 overflow-hidden flex items-center justify-center shadow-inner">
                       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:1.25rem_1.25rem] opacity-25"></div>
                       
                       <svg className="w-full h-full absolute inset-0 opacity-40">
@@ -646,7 +648,7 @@ export default function Dashboard() {
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all active:scale-[0.98] ${
                   activeTab === item.name
-                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)]'
+                    ? 'bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] border-l-4 border-blue-400'
                     : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
                 }`}
               >
