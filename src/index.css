@@ -1234,3 +1234,9 @@ table tbody tr:hover {
   background-color: #F9FAFB !important;
 }
 
+/* Fix search icon overlapping placeholder text globally */
+.relative input {
+  padding-left: 2.75rem !important;
+}
+
+

@@ -10,12 +10,11 @@ import {
   TrendingUp,
   Compass,
   Bell,
-  Search,
-  Filter,
   Wrench,
   Users,
   CheckCircle,
   Droplet,
+  Filter,
   Menu,
   X,
   DollarSign,
@@ -247,18 +246,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Header Controls (Search & Notifications & Profile on the right side - Prevents Title Overlaps) */}
+          {/* Header Controls (Notifications & Profile dropdown - Prevents Duplicate Search Overlaps) */}
           <div className="flex items-center gap-4">
-            {/* Search Bar - Fixed width on right side to prevent title overlaps */}
-            <div className="relative hidden lg:block">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search fleets, routes, operators..."
-                className="w-64 pl-9 pr-4 py-1.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] text-xs text-[#111827] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] transition-colors"
-              />
-            </div>
-
             {/* Notification Bell */}
             <button className="relative p-2 rounded-lg bg-white border border-[#E5E7EB] text-[#6B7280] hover:text-[#111827] transition-all">
               <Bell className="w-4 h-4" />
@@ -382,7 +371,7 @@ export default function Dashboard() {
                   <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-[#D97706]" />
                   <div>
                     <p className="text-sm font-bold text-[#92400E] tracking-tight">Weather Alert: Midwest Region (ORD1)</p>
-                    <p className="text-xs text-amber-805 mt-1 font-semibold leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
+                    <p className="text-xs text-amber-850 mt-1 font-semibold leading-relaxed">Heavy rainfall expected. Fleet operators are advised to enable route redirection for high-priority shipments.</p>
                   </div>
                 </div>
                 <button className="px-4 py-2 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white text-xs font-bold self-start sm:self-center transition-all duration-200 active:scale-[0.98] shadow-sm">
@@ -391,7 +380,7 @@ export default function Dashboard() {
               </div>
 
               {/* Summary Metric Cards - Grid of 3 Columns (doubles size, prevents wrapping & text cuts) */}
-              {/* Uses rounded-[20px], p-8 (32px padding) and flex-grow instead of height restrictions */}
+              {/* Uses rounded-[20px], p-6 padding and min-h-[190px] for spacious box layouts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch w-full animate-fadeIn">
                 {[
                   { title: 'Active Vehicles', value: kpis.activeVehicles.toLocaleString(), desc: 'Active in transit', icon: Truck, trend: '+4.2%', up: true, badgeBg: 'bg-[#2563EB]', iconColor: 'text-white', glow: 'shadow-blue-500/10' },
@@ -403,11 +392,11 @@ export default function Dashboard() {
                 ].map((stat, idx) => (
                   <div 
                     key={idx} 
-                    className="p-8 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[180px] animate-slide-up-fade"
+                    className="p-6 rounded-[20px] bg-white border border-[#E5E7EB] relative overflow-hidden group hover:scale-[1.02] hover:-translate-y-1 hover:shadow-md hover:border-slate-350 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.03),0_10px_15px_-3px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[190px] animate-slide-up-fade"
                     style={{ animationDelay: `${100 + idx * 50}ms` }}
                   >
-                    {/* Fixed Height Bug: Using flex-grow instead of height constraints ensures descriptions are never cut off */}
-                    <div className="relative z-10 flex flex-col justify-between flex-grow gap-5">
+                    {/* Fixed Height Bug: Using flex-grow with p-6 and min-h-190px ensures descriptions have plenty of room */}
+                    <div className="relative z-10 flex flex-col justify-between flex-grow gap-4">
                       <div className="flex justify-between items-center">
                         {/* Circular solid background for icons */}
                         <div className={`w-12 h-12 rounded-full ${stat.badgeBg} ${stat.iconColor} ${stat.glow} flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-md`}>
@@ -567,7 +556,7 @@ export default function Dashboard() {
                         { name: 'Schedule Maintenance', desc: 'Add maintenance task', icon: Wrench, tab: 'Maintenance', color: 'text-purple-600 bg-purple-55 border border-purple-100' },
                         { name: 'Add Fuel Log', desc: 'Record fuel entry', icon: Droplet, tab: 'Fuel Management', color: 'text-cyan-600 bg-cyan-55 border border-cyan-100' },
                         { name: 'Add Expense', desc: 'Record other expense', icon: DollarSign, tab: 'System Settings', color: 'text-amber-600 bg-amber-55 border border-[#FDE68A]' },
-                        { name: 'View Reports', desc: 'Analytics & insights', icon: TrendingUp, tab: 'Overview', color: 'text-indigo-650 bg-[#EEF2FF] border border-[#E0E7FF]' }
+                        { name: 'View Reports', desc: 'Analytics & insights', icon: TrendingUp, tab: 'Overview', color: 'text-indigo-655 bg-[#EEF2FF] border border-[#E0E7FF]' }
                       ].map((action, idx) => (
                         <button
                           key={idx}
